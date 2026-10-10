@@ -1,4 +1,9 @@
-"""Google Solar API client with a clearly-labeled DEMO mode.
+"""Roof imagery adapter — Google Solar API client with clearly-labeled DEMO mode.
+
+DESIGN NOTE: this module is an *imagery source*, not intelligence. The brain
+is our own rooftop segmentation model (wave 4, trained on open aerial data),
+which will read roofs from any imagery source plugged in here. Google is a
+swappable tap, never the product.
 
 Real endpoints (need GOOGLE_SOLAR_API_KEY):
   - buildingInsights: roof segments, area, shading, solar potential

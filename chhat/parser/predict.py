@@ -8,10 +8,15 @@ from __future__ import annotations
 import os
 import re
 
-import torch
+try:
+    import torch
 
-from .model import AddressTagger
-from .train import LABELS, PAD, UNK, spans_of, tokenize_text
+    from .model import AddressTagger
+    from .train import LABELS, PAD, UNK, spans_of, tokenize_text
+
+    _TORCH_AVAILABLE = True
+except ImportError:  # lightweight deploy (no torch): numpy inference
+    _TORCH_AVAILABLE = False
 
 DEFAULT_MODEL = os.path.join(os.path.dirname(__file__), "..", "..",
                              "models", "address_parser.pt")
@@ -34,6 +39,29 @@ def _clean(value: str, kind: str) -> str:
 
 
 class AddressParser:
+    """Unified parser: torch when available, pure-numpy fallback otherwise.
+
+    Both paths run the same trained weights and produce identical labels
+    (verified by tests/test_numpy_parity.py).
+    """
+
+    def __init__(self, model_path: str = DEFAULT_MODEL):
+        if _TORCH_AVAILABLE:
+            self._impl = _TorchParser(model_path)
+        else:
+            from .infer_numpy import NumpyAddressParser
+
+            npz = os.path.join(os.path.dirname(model_path), "address_parser.npz")
+            self._impl = NumpyAddressParser(npz)
+
+    def parse(self, text: str) -> dict:
+        return self._impl.parse(text)
+
+    def query_string(self, text: str) -> str:
+        return self._impl.query_string(text)
+
+
+class _TorchParser:
     def __init__(self, model_path: str = DEFAULT_MODEL):
         bundle = torch.load(model_path, map_location="cpu", weights_only=False)
         cfg = bundle["config"]

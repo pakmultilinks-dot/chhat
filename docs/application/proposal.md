@@ -32,7 +32,9 @@ minute:
    (house / street / block / colony / city).
 3. The address is geocoded; the user confirms the exact rooftop with a
    draggable map pin.
-4. Roof geometry, shading, and solar potential are analyzed.
+4. **Our rooftop segmentation model** reads the roof from aerial imagery:
+   usable area, shading, and obstructions. Imagery is a swappable input —
+   Google Solar API or open aerial datasets — never the intelligence.
 5. Our **layout optimizer** places 550W panels around real Pakistani rooftop
    obstructions (water tanks, mumty/stair bulkheads, parapets).
 6. The **net-billing quote engine** sizes the system for *self-consumption*,
@@ -49,12 +51,20 @@ We claim no algorithmic breakthrough. The intelligence is applied and honest:
   classifier to extract structured fields. Test results: **token accuracy
   1.00, entity F1 1.00** (2,000 held-out synthetic addresses). The map-pin
   confirmation step is the safety net for messy real-world input.
+- **Our own rooftop segmentation model (in training).** Aerial imagery goes
+  in; usable roof area, shading, and obstructions come out — trained by us on
+  open aerial datasets, not borrowed from anyone's API.
 - **Layout optimization.** Panel placement under geometric constraints with
   obstruction avoidance — the piece generic calculators skip.
 - **Net-billing sizing model.** The objective function changed in October
   2026: maximize self-consumed kWh (worth Rs 47.69) instead of total
   generation. Our quote engine encodes this; old tools do not.
-- Satellite roof data comes from the Google Solar API (supplier, not product).
+- **Anti-hallucination by design.** Every output is confidence-gated: the
+  parser shows its fields, geocoding shows its confidence, the map pin lets
+  the user correct the location. The system never pretends certainty it
+  does not have.
+- Google Solar API, where used, is an **optional imagery source** — a tap we
+  can open or close. It is never the intelligence.
 
 ## 4. Validation plan
 
@@ -97,9 +107,12 @@ model, so estimates get sharper over time.
 ## 8. Honest limitations
 
 - The address parser is trained on **synthetic** data; real-world addresses
-  are messier. The draggable map pin is the accuracy backstop.
-- Without a Google Solar API key, roof geometry runs in clearly-labeled
-  **demo mode** (synthetic Lahore rooftop).
+  are messier. The draggable map pin is the accuracy backstop, and every
+  output is confidence-gated rather than hallucinated.
+- Roof imagery is a swappable input (Google Solar API or open aerial
+  datasets). Our own segmentation model — the intelligence that reads the
+  roof — is in training; until it lands, roof geometry in the demo is
+  clearly-labeled **synthetic demo data**.
 - Quote figures are **estimates** from Oct-2026 market rates; a site visit
   still confirms the final quote. Chhat kills quote friction, not the engineer.
 - This submission is the **Satellite eye**; the Makaan AI roadmap adds

@@ -22,10 +22,14 @@
 
 ## Minute 3:30–4:15 — What is actually AI
 - Trained address parser (BiLSTM, entity F1 1.00 on 2,000 test addresses).
+- Our own rooftop segmentation model, in training on open aerial data —
+  the intelligence that reads a roof is ours, not rented.
 - Layout optimizer under real rooftop constraints.
 - Net-billing sizing model — the math nobody else updated.
-- Honest line: "Google gives us the satellite photo. The intelligence that
-  turns it into a quote for a Pakistani roof is ours."
+- Anti-hallucination by design: confidence-gated outputs, user-confirmed pin.
+- Honest line: "Google can sell us a satellite photo. Everything that turns
+  it into a quote for a Pakistani roof — the parser, the segmentation, the
+  layout, the math — is trained and built by us."
 
 ## Minute 4:15–5:00 — Business + close
 - Free scores for homeowners; qualified leads to installer partners
@@ -38,10 +42,13 @@
 ## Judge Q&A drill — 10 hard questions
 
 1. **"Isn't this just the Google Solar API?"**
-   Google sells raw roof data. No Pakistani product turns it into a quote,
-   nobody models net billing, nobody handles water tanks and mumty
-   structures, nobody parses Pakistani addresses, nobody speaks Urdu.
-   The API is our supplier, not our product.
+   No — and this is the most important thing we can tell you. Google is an
+   *optional imagery tap*. Our intelligence is four things we trained and
+   built ourselves: the address parser (our model, our weights), our own
+   rooftop segmentation model (in training on open aerial data), the layout
+   optimizer, and the net-billing sizing engine. Unplug Google tomorrow and
+   Chhat still parses, still segments, still lays out, still quotes — it
+   just reads a different photo. Nobody's model is our brain.
 
 2. **"What's actually AI here, and what's just API calls?"**
    The address parser is a model we trained (metrics on the slide). The

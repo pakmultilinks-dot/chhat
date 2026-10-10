@@ -7,14 +7,18 @@ get your roof's solar score, system size, PKR quote, and payback period.
 
 ```
 address text
-  → Pakistani address parser (trained BiLSTM token classifier)
-  → Google Geocoding API → lat/lng
+  → Pakistani address parser (OUR trained BiLSTM token classifier)
+  → Google Geocoding API → lat/lng  (geocoding utility, not intelligence)
   → user confirms/drags map pin
-  → Google Solar API → roof segments, shading, solar potential
-  → layout optimizer → panel placement avoiding tanks/mumty
-  → net-billing quote engine → PKR quote + payback
+  → OUR rooftop segmentation model reads the roof  (in training;
+     imagery: Google Solar API or open aerial datasets — swappable input)
+  → OUR layout optimizer → panel placement avoiding tanks/mumty
+  → OUR net-billing quote engine → PKR quote + payback
   → Chhat Score 0-100
 ```
+
+**Design rule: our models are the brain.** External APIs are utilities
+(geocoding) or swappable imagery inputs — never the intelligence.
 
 ## Setup
 
@@ -37,12 +41,14 @@ python3 -m venv .venv
 
 | Key | Purpose |
 |---|---|
-| `GOOGLE_MAPS_API_KEY` | address → lat/lng geocoding |
-| `GOOGLE_SOLAR_API_KEY` | live roof data (BuildingInsights + imagery) |
+| `GOOGLE_MAPS_API_KEY` | address → lat/lng geocoding (utility, not intelligence) |
+| `GOOGLE_SOLAR_API_KEY` | **optional** roof imagery source (imagery input only) |
 
 Without keys the app runs in **DEMO mode**: the address parser still works
 (trained model, local), geocoding is replaced by a draggable map pin, and the
 roof is a realistic synthetic Lahore rooftop clearly labeled DEMO in code and UI.
+Our own segmentation model (wave 4) will read live roofs from any imagery
+source — no vendor lock-in by design.
 
 ## Project layout
 
@@ -63,8 +69,11 @@ roof is a realistic synthetic Lahore rooftop clearly labeled DEMO in code and UI
 
 - The address parser is trained on **synthetic** addresses (templates from real
   Lahore patterns). Real-world messy addresses will be harder; the map-pin
-  confirmation step is the safety net.
-- Without `GOOGLE_SOLAR_API_KEY`, roof geometry is synthetic demo data.
+  confirmation step is the safety net, and outputs are confidence-gated.
+- Our rooftop segmentation model is in training (wave 4, open aerial data).
+  Until it lands, roof geometry without an imagery key is synthetic demo data,
+  clearly labeled. Imagery sources are swappable by design — no vendor is
+  the brain.
 - Quote prices in `prices.yaml` are Oct-2026 market estimates; verify before
   customer-facing use.
 - This is the Satellite eye only (Makain AI roadmap: Designer, 3D, Guardian).
