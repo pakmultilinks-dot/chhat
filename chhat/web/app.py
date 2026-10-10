@@ -17,11 +17,12 @@ from flask import Flask, jsonify, render_template, request
 from chhat.geocode.client import GeocodeError, geocode
 from chhat.layout.optimizer import optimize
 from chhat.parser.predict import AddressParser
-from chhat.quote.engine import chhat_score, quote
+from chhat.quote.engine import chhat_score, load_config, quote
 from chhat.solar.client import SolarError, building_insights
 
 app = Flask(__name__)
 _parser: AddressParser | None = None
+_config = load_config()
 
 
 def parser() -> AddressParser:
@@ -82,7 +83,8 @@ def api_analyze():
             geo = {"lat": lat, "lng": lng, "formatted_address": text,
                    "confidence": "USER_PINNED", "place_id": None}
         roof = building_insights(lat, lng)
-        lay = optimize(roof)
+        max_kw = float(_config.get("sizing", {}).get("max_system_kw", 10.0))
+        lay = optimize(roof, max_system_kw=max_kw)
         q = quote(lay, annual_kwh_per_kw=roof.get("annual_kwh_per_kw"))
         score = chhat_score(roof, lay, q)
         return jsonify({

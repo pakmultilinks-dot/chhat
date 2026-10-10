@@ -110,6 +110,12 @@ def generate_one(rng: random.Random) -> tuple[list[str], list[str]]:
                   (rng.choice(STREET_WORDS), None), (rng.choice(NO_WORDS), None),
                   (_street_token(rng), "STREET"), (",", None),
                   (colony, "COLONY"), (",", None), (city, "CITY")]
+    elif style < 0.93:
+        # "Plot 12, Block H, Johar Town, Lahore" (no street)
+        h, _ = _house_token(rng)
+        parts += [(rng.choice(["Plot", "House"]), None), (h, "HOUSE"), (",", None),
+                  (rng.choice(BLOCK_WORDS), None), (_block_token(rng), "BLOCK"), (",", None),
+                  (colony, "COLONY"), (",", None), (city, "CITY")]
     else:
         # "Flat 3, Building 9, Gulberg III, Lahore"
         parts += [(rng.choice(["Flat", "Apartment", "Portion"]), None),

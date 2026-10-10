@@ -29,3 +29,6 @@ scoring:
   w_shade: 0.25
   w_system_fit: 0.25   # how well roof fits a useful system size
   w_payback: 0.20
+
+sizing:
+  max_system_kw: 10.0  # homes rarely need more; net-billing rewards self-use

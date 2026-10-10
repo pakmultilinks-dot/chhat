@@ -1,0 +1,12 @@
+{
+  "test": {
+    "token_accuracy": 1.0,
+    "entity_precision": 1.0,
+    "entity_recall": 1.0,
+    "entity_f1": 1.0
+  },
+  "n_train": 8000,
+  "n_test": 1500,
+  "epochs": 12,
+  "seed": 7
+}

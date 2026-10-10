@@ -23,7 +23,7 @@ def _rect_for_area(area_m2: float) -> tuple[float, float]:
     return w, area_m2 / w
 
 
-def optimize(roof: dict) -> dict:
+def optimize(roof: dict, max_system_kw: float = 10.0) -> dict:
     segments = roof.get("segments", [])
     obstructions = roof.get("obstructions", [])
     obstruction_area = sum(o.get("area_m2", 0) for o in obstructions)
@@ -31,7 +31,10 @@ def optimize(roof: dict) -> dict:
     panels: list[dict] = []
     usable_total = 0.0
     seg_rects: list[dict] = []
+    max_panels = int(max_system_kw * 1000 / PANEL_WP)
     for si, seg in enumerate(segments):
+        if len(panels) >= max_panels:
+            break
         area = seg.get("area_m2") or 0
         if area <= 0:
             continue
@@ -49,6 +52,8 @@ def optimize(roof: dict) -> dict:
                           "h": round(eh, 2), "azimuth": seg.get("azimuth_degrees")})
         for r in range(rows):
             for c in range(cols):
+                if len(panels) >= max_panels:
+                    break
                 panels.append({
                     "segment": si,
                     "x": round(c * (PANEL_W_M + 0.05) + SETBACK_M / 2, 2),
@@ -56,6 +61,8 @@ def optimize(roof: dict) -> dict:
                     "w": PANEL_W_M, "h": PANEL_H_M,
                     "azimuth": seg.get("azimuth_degrees"),
                 })
+            if len(panels) >= max_panels:
+                break
 
     n_panels = len(panels)
     system_kw = round(n_panels * PANEL_WP / 1000, 2)
