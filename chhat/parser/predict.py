@@ -18,8 +18,9 @@ DEFAULT_MODEL = os.path.join(os.path.dirname(__file__), "..", "..",
 
 # Descriptor prefixes people glue onto house/street numbers ("H#123",
 # "St.No.3"). Stripped after tagging so UI + geocoder see clean values.
-_HOUSE_PRE = re.compile(r"^(h#|h\.?no\.?|house#?|plot#?|p#|flat#?|shop#?)\s*", re.I)
-_STREET_PRE = re.compile(r"^(st#?|st\.?\s*no\.?|street#?|gali#?|rd#?)\s*", re.I)
+# NOTE: longest alternatives first — "street#?" must precede "st#?".
+_HOUSE_PRE = re.compile(r"^(house#?|h\.?no\.?|h#|plot#?|flat#?|shop#?|p#)\s*", re.I)
+_STREET_PRE = re.compile(r"^(street#?|st\.?\s*no\.?|st#?|gali#?|rd#?|no\.?)\s*", re.I)
 _EDGE_JUNK = re.compile(r"^[#.\s]+|[#.\s]+$")
 
 

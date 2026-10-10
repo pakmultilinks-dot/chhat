@@ -5,8 +5,8 @@
     "entity_recall": 1.0,
     "entity_f1": 1.0
   },
-  "n_train": 8000,
-  "n_test": 1500,
-  "epochs": 12,
-  "seed": 7
+  "n_train": 10000,
+  "n_test": 2000,
+  "epochs": 15,
+  "seed": 42
 }
