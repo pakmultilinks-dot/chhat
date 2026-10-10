@@ -1,0 +1,6 @@
+# Chhat serverless runtime (Vercel). Torch-free: inference runs on numpy.
+# See chhat/parser/infer_numpy.py and scripts/export_numpy_weights.py.
+flask>=3.0
+numpy>=1.26
+pyyaml>=6.0
+requests>=2.31

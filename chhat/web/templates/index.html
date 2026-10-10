@@ -10,9 +10,13 @@
   * { box-sizing: border-box; }
   body { font-family: system-ui, "Noto Nastaliq Urdu", sans-serif; background: var(--paper);
          color: var(--ink); margin: 0; padding: 0; }
-  header { background: #1c1917; color: #fde68a; padding: 28px 20px; text-align: center; position: relative; }
-  header h1 { margin: 0; font-size: 34px; }
-  header p { margin: 6px 0 0; color: #d6d3d1; }
+  header { background: #1c1917; color: #fde68a; padding: 34px 20px 30px; text-align: center; position: relative; }
+  header h1 { margin: 0; font-size: 38px; }
+  header .one-liner { margin: 10px auto 0; color: #fde68a; font-size: 18px; font-weight: 600; max-width: 560px; }
+  header .sub { margin: 6px auto 0; color: #d6d3d1; font-size: 14px; max-width: 600px; }
+  .how { display: flex; justify-content: center; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+  .how span { background: #292524; color: #fcd34d; font-size: 13px; padding: 7px 14px;
+              border-radius: 999px; border: 1px solid #44403c; }
   .lang { position: absolute; top: 14px; right: 16px; }
   .lang a { color: #fde68a; margin-left: 10px; text-decoration: none; font-weight: bold; }
   main { max-width: 860px; margin: 0 auto; padding: 20px 16px 60px; }
@@ -69,7 +73,9 @@
 <header>
   <div class="lang"><a href="/?lang=en">EN</a><a href="/?lang=ur">اردو</a></div>
   <h1>☀️ چھت Chhat</h1>
-  <p>{{ s.tagline }}</p>
+  <p class="one-liner">Paste your home address. Our AI scores your roof for solar — system size, PKR quote, payback.</p>
+  <p class="sub">Trained Pakistani-address parser · own rooftop intelligence · net-billing era sizing · English/اردو</p>
+  <div class="how"><span>1 · Address</span><span>2 · Confirm pin</span><span>3 · Roof report</span></div>
 </header>
 <main>
   <div class="steps-bar">
