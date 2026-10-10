@@ -3,7 +3,7 @@
 **Category:** AI in Urban Tech
 **Team:** Abdur Rehman, M. Bilal, Daud, Awais — Lahore Garrison University
 **Repository:** https://github.com/pakmultilinks-dot/chhat
-**Live demo:** _(deployment link added on deploy; local demo: `python -m chhat.web.app`)_
+**Live demo:** https://chhat-pakmultilinks-dot.vercel.app/
 **Contact:** Abdur Rehman
 
 ---
