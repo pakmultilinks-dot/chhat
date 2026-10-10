@@ -16,6 +16,13 @@ import numpy as np
 
 DEFAULT_NPZ = os.path.join(os.path.dirname(__file__), "..", "..",
                           "models", "address_parser.npz")
+# Fallback: download weights from the public repo on first run (serverless
+# deployments ship code without the 3.5MB weight file).
+DEFAULT_MODEL_URL = os.environ.get(
+    "CHHAT_MODEL_URL",
+    "https://raw.githubusercontent.com/pakmultilinks-dot/chhat"
+    "/dev/satellite-eye/models/address_parser.npz",
+)
 
 # --- tiny text utils (duplicated from train.py to avoid importing torch) ---
 PAD, UNK = "<pad>", "<unk>"
@@ -82,8 +89,38 @@ def _lstm_forward(x: np.ndarray, w_ih: np.ndarray, w_hh: np.ndarray,
     return out
 
 
+def _ensure_weights(npz_path: str) -> str:
+    """Return a local .npz path, downloading from the public repo if missing.
+
+    Serverless deployments exclude the 3.5MB weight file; on first run it is
+    fetched once to a writable cache (/tmp on Vercel, repo models/ locally).
+    """
+    if os.path.exists(npz_path):
+        return npz_path
+    import urllib.request
+
+    for cache_dir in ("/tmp", os.path.dirname(npz_path)):
+        try:
+            os.makedirs(cache_dir, exist_ok=True)
+            dest = os.path.join(cache_dir, "address_parser.npz")
+            if os.path.exists(dest):
+                return dest
+            req = urllib.request.Request(DEFAULT_MODEL_URL,
+                                         headers={"User-Agent": "chhat/1.0"})
+            with urllib.request.urlopen(req, timeout=60) as r, \
+                    open(dest, "wb") as f:
+                f.write(r.read())
+            return dest
+        except Exception:
+            continue
+    raise FileNotFoundError(
+        f"address parser weights not found at {npz_path} and download failed; "
+        "set CHHAT_MODEL_URL or ship models/address_parser.npz")
+
+
 class NumpyAddressParser:
     def __init__(self, npz_path: str = DEFAULT_NPZ):
+        npz_path = _ensure_weights(npz_path)
         z = np.load(npz_path, allow_pickle=False)
         self.vocab = dict(zip(z["vocab_keys"].tolist(), z["vocab_vals"].tolist()))
         self.labels = z["labels"].tolist()
