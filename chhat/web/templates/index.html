@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ s.title }}</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  :root { --amber: #f59e0b; --ink: #1c1917; --paper: #fffbeb; }
+  * { box-sizing: border-box; }
+  body { font-family: system-ui, "Noto Nastaliq Urdu", sans-serif; background: var(--paper);
+         color: var(--ink); margin: 0; padding: 0; }
+  header { background: #1c1917; color: #fde68a; padding: 28px 20px; text-align: center; }
+  header h1 { margin: 0; font-size: 34px; }
+  header p { margin: 6px 0 0; color: #d6d3d1; }
+  .lang { position: absolute; top: 14px; right: 16px; }
+  .lang a { color: #fde68a; margin-left: 10px; text-decoration: none; font-weight: bold; }
+  main { max-width: 860px; margin: 0 auto; padding: 24px 16px 60px; }
+  .card { background: #fff; border: 1px solid #e7e5e4; border-radius: 14px;
+          padding: 20px; margin-bottom: 18px; box-shadow: 0 2px 8px #00000008; }
+  input[type=text] { width: 100%; padding: 14px; font-size: 17px; border-radius: 10px;
+                     border: 2px solid #d6d3d1; }
+  button.go { margin-top: 12px; width: 100%; padding: 14px; font-size: 18px; font-weight: bold;
+              background: var(--amber); border: none; border-radius: 10px; cursor: pointer; }
+  button.go:disabled { opacity: .5; }
+  #map { height: 340px; border-radius: 10px; margin-top: 12px; display: none; }
+  .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .field { background: #fef3c7; border-radius: 8px; padding: 8px 12px; font-size: 14px; }
+  .field b { display: block; font-size: 11px; color: #92400e; text-transform: uppercase; }
+  .score-ring { width: 150px; height: 150px; border-radius: 50%; margin: 0 auto;
+                display: flex; align-items: center; justify-content: center;
+                font-size: 52px; font-weight: 800; color: #fff; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 14px; }
+  .kpi { background: #fef3c7; border-radius: 10px; padding: 12px; text-align: center; }
+  .kpi b { display: block; font-size: 22px; }
+  .kpi span { font-size: 12px; color: #57534e; }
+  .demo { background: #dc2626; color: #fff; font-weight: bold; text-align: center;
+          border-radius: 8px; padding: 8px; margin-bottom: 12px; }
+  #roof { width: 100%; height: auto; background: #f5f5f4; border-radius: 10px; }
+  .err { color: #b91c1c; font-weight: bold; }
+  .step { display: none; }
+  .step.on { display: block; }
+</style>
+</head>
+<body>
+<header>
+  <div class="lang"><a href="/?lang=en">EN</a><a href="/?lang=ur">اردو</a></div>
+  <h1>☀️ چھت Chhat</h1>
+  <p>{{ s.tagline }}</p>
+</header>
+<main>
+  <div class="card step on" id="step1">
+    <input type="text" id="addr" placeholder="{{ s.address_ph }}" dir="auto">
+    <button class="go" id="go">{{ s.analyze }}</button>
+    <div id="err1" class="err"></div>
+  </div>
+
+  <div class="card step" id="step2">
+    <h3>Parsed address</h3>
+    <div class="fields" id="fields"></div>
+    <p style="color:#57534e;font-size:14px">Drag the pin to your exact rooftop, then confirm.</p>
+    <div id="map"></div>
+    <button class="go" id="confirm">Confirm location →</button>
+    <div id="err2" class="err"></div>
+  </div>
+
+  <div class="card step" id="step3">
+    <div id="demoBadge" class="demo" style="display:none">{{ s.demo_badge }}</div>
+    <h3 style="text-align:center">Chhat Score</h3>
+    <div class="score-ring" id="ring">–</div>
+    <div class="kpis" id="kpis"></div>
+    <h3 style="margin-top:22px">Roof layout</h3>
+    <svg id="roof" viewBox="0 0 400 300"></svg>
+    <h3 style="margin-top:22px">Quote breakdown</h3>
+    <div class="kpis" id="quote"></div>
+    <p style="font-size:12px;color:#78716c" id="fineprint"></p>
+  </div>
+</main>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+let lat = null, lng = null, map = null, marker = null;
+
+function show(id){ document.querySelectorAll('.step').forEach(e=>e.classList.remove('on')); $(id).classList.add('on'); }
+
+$('go').onclick = async () => {
+  const address = $('addr').value.trim();
+  if(!address) return;
+  $('go').disabled = true; $('err1').textContent = '';
+  try {
+    const r = await fetch('/api/parse', {method:'POST',
+      headers:{'Content-Type':'application/json'}, body: JSON.stringify({address})});
+    const p = await r.json();
+    if(p.error) throw new Error(p.error);
+    const rows = [['house','House'],['street','Street'],['block','Block'],['colony','Colony'],['city','City']];
+    $('fields').innerHTML = rows.map(([k,label]) =>
+      `<div class="field"><b>${label}</b>${p[k] || '—'}</div>`).join('');
+    show('step2');
+    // default view: Lahore
+    lat = 31.5204; lng = 74.3587;
+    $('map').style.display = 'block';
+    if(map) map.remove();
+    map = L.map('map').setView([lat,lng], 13);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
+    marker = L.marker([lat,lng], {draggable:true}).addTo(map);
+    marker.on('dragend', () => { const ll = marker.getLatLng(); lat = ll.lat; lng = ll.lng; });
+  } catch(e){ $('err1').textContent = e.message; }
+  $('go').disabled = false;
+};
+
+$('confirm').onclick = async () => {
+  const address = $('addr').value.trim();
+  $('confirm').disabled = true; $('err2').textContent = '';
+  try {
+    const r = await fetch('/api/analyze', {method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({address, lat, lng})});
+    const d = await r.json();
+    if(d.error) throw new Error(d.error);
+    if(d.demo) $('demoBadge').style.display = 'block';
+    const sc = d.score.score;
+    const ring = $('ring');
+    ring.textContent = sc;
+    ring.style.background = sc >= 70 ? '#16a34a' : sc >= 45 ? '#f59e0b' : '#dc2626';
+    $('kpis').innerHTML = [
+      [d.layout.system_kw + ' kW', 'System size'],
+      [d.layout.panel_count, 'Panels (550W)'],
+      [Math.round(d.quote.annual_generation_kwh).toLocaleString() + ' kWh', 'Yearly generation'],
+      [d.quote.payback_years + ' yrs', 'Payback period'],
+    ].map(([b,s]) => `<div class="kpi"><b>${b}</b><span>${s}</span></div>`).join('');
+    // roof schematic: scale meters -> svg (viewBox 400x300)
+    const svg = $('roof'); svg.innerHTML = '';
+    const NS = 'http://www.w3.org/2000/svg';
+    const mk = (t,a) => { const e = document.createElementNS(NS,t); for(const k in a) e.setAttribute(k,a[k]); svg.appendChild(e); return e; };
+    const segs = d.layout.segments || [];
+    const totalH = segs.reduce((s,r) => s + r.h, 0) || 1;
+    const maxW = Math.max(...segs.map(r => r.w), 1);
+    const k = Math.min(380 / maxW, 260 / totalH);
+    let oy = 20;
+    segs.forEach(r => {
+      const w = r.w * k, h = r.h * k;
+      mk('rect',{x:200-w/2, y:oy, width:w, height:h, rx:6, fill:'#e7e5e4', stroke:'#a8a29e'});
+      oy += h;
+    });
+    d.layout.panels.forEach(p => {
+      mk('rect',{x:200-(maxW*k)/2 + p.x*k, y:20 + p.y*k, width:p.w*k, height:p.h*k,
+                 rx:2, fill:'#1d4ed8', stroke:'#1e3a8a', opacity:0.92});
+    });
+    $('quote').innerHTML = [
+      ['Rs ' + Math.round(d.quote.equipment_cost_pkr).toLocaleString(), 'System cost'],
+      ['Rs ' + Math.round(d.quote.annual_savings_pkr).toLocaleString(), 'Saved / year'],
+      ['Rs ' + Math.round(d.quote.lifetime_savings_25y_pkr).toLocaleString(), '25-yr savings'],
+      [d.score.breakdown.usable_area + ' / ' + d.score.breakdown.shade + ' / ' + d.score.breakdown.payback, 'Area / Shade / Payback'],
+    ].map(([b,s]) => `<div class="kpi"><b>${b}</b><span>${s}</span></div>`).join('');
+    $('fineprint').textContent =
+      `Tariff Rs ${d.quote.tariff_used}/unit, export Rs ${d.quote.export_rate_used}/unit (net billing). ` +
+      `Usable roof ${d.layout.usable_area_m2} m². ${d.roof.note || ''}`;
+    show('step3');
+  } catch(e){ $('err2').textContent = e.message; }
+  $('confirm').disabled = false;
+};
+</script>
+</body>
+</html>

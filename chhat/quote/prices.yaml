@@ -1,0 +1,31 @@
+# Chhat pricing configuration — ALL numbers live here, nothing hardcoded.
+# Sources: Pakistani solar market rates, Oct 2026. Update as tariffs move.
+# Tariff context: LESCO residential ~Rs47.69/unit (Oct 2026).
+# NEPRA net billing (Oct 2026): export buyback Rs8-11/unit vs retail Rs35-65.
+
+equipment:
+  panel_550w_pkr: 42000        # per 550W panel, installed market rate
+  inverter_per_kw_pkr: 45000   # hybrid inverter, per kW
+  mounting_per_kw_pkr: 12000   # elevated structure, per kW
+  labor_per_kw_pkr: 8000       # installation labor, per kW
+  net_metering_fee_pkr: 25000  # net-billing meter + paperwork
+
+tariff:
+  retail_rs_per_unit: 47.69    # what a self-consumed unit saves you
+  export_rs_per_unit: 9.5      # net-billing buyback (midpoint of 8-11)
+  annual_tariff_hike: 0.08     # assumed yearly tariff increase
+
+generation:
+  annual_kwh_per_kw: 1550      # Lahore specific yield (conservative)
+
+consumption_model:
+  # Net-billing era: size for self-consumption, not export.
+  self_consumption_ratio: 0.70 # share of generation used in-home (daytime load)
+  # export_ratio is 1 - self_consumption_ratio
+
+scoring:
+  # Chhat Score 0-100 weights
+  w_usable_area: 0.30
+  w_shade: 0.25
+  w_system_fit: 0.25   # how well roof fits a useful system size
+  w_payback: 0.20
