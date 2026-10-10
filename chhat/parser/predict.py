@@ -53,3 +53,19 @@ class AddressParser:
         bits = [b for b in [p["house"], p["street"], p["block"],
                             p["colony"], p["city"]] if b]
         return ", ".join(bits) if bits else text
+
+
+_PARSER: AddressParser | None = None
+
+
+def parse_address(text: str, model_path: str = DEFAULT_MODEL) -> dict:
+    """Parse a raw Pakistani address into structured fields.
+
+    Simple one-call API: parse_address("H#123 St 4 Nishat Colony Lahore")
+    -> {"house": "123", "street": "4", "block": "", "colony": "Nishat Colony",
+        "city": "Lahore", ...}
+    """
+    global _PARSER
+    if _PARSER is None:
+        _PARSER = AddressParser(model_path)
+    return _PARSER.parse(text)

@@ -134,11 +134,113 @@ def generate_one(rng: random.Random) -> tuple[list[str], list[str]]:
     return tokens, _label_tokens(tokens, spans)
 
 
-def generate(n: int, seed: int = 42) -> list[dict]:
+def _build(tokens_with_labels: list[tuple[str, str | None]]) -> tuple[list[str], list[str]]:
+    """Build (tokens, BIO labels) from (word, entity-or-None) pairs.
+
+    Convention: descriptor words (House, Street, Makan, Gali, No., ...) are O;
+    only the value tokens carry entity tags (HOUSE/STREET/BLOCK/COLONY/CITY).
+    """
+    tokens: list[str] = []
+    spans: list[tuple[int, int, str]] = []
+    for text, entity in tokens_with_labels:
+        words = text.split()
+        if entity:
+            spans.append((len(tokens), len(tokens) + len(words), entity))
+        tokens.extend(words)
+    return tokens, _label_tokens(tokens, spans)
+
+
+# Urdu-mixed descriptor words people actually type (labeled O, like "House")
+URDU_HOUSE = ["Makan", "Makaan", "Mkn"]
+URDU_STREET = ["Gali", "Gali No", "Mohallah"]
+MESSY_HOUSE_PRE = ["H#", "H.No.", "H.No", "H #", "House No", "House#", "Plot No",
+                   "P#"]
+MESSY_STREET_PRE = ["St#", "St. No.", "St No", "Street#", "Gali#"]
+
+
+def generate_messy(rng: random.Random) -> tuple[list[str], list[str]]:
+    """Messy real-world address variants. Same label convention as clean data."""
+    lahore = rng.random() < 0.62
+    if lahore:
+        colony, city = rng.choice(LAHORE_COLONIES), "Lahore"
+    else:
+        city, colonies = rng.choice(OTHER_CITIES)
+        colony = rng.choice(colonies)
+
+    h, _ = _house_token(rng)
+    style = rng.random()
+    comma = "," if rng.random() < 0.45 else ""
+
+    def join(items: list[tuple[str, str | None]]) -> list[tuple[str, str | None]]:
+        out: list[tuple[str, str | None]] = []
+        for i, it in enumerate(items):
+            out.append(it)
+            if comma and i < len(items) - 1:
+                out.append((comma, None))
+        return out
+
+    if style < 0.20:
+        # no commas at all: "House 123 Street 4 Block C Nishat Colony Lahore"
+        items = [(rng.choice(HOUSE_WORDS), None), (h, "HOUSE"),
+                 (rng.choice(STREET_WORDS), None), (_street_token(rng), "STREET")]
+        if rng.random() < 0.6:
+            items += [(rng.choice(BLOCK_WORDS), None), (_block_token(rng), "BLOCK")]
+        items += [(colony, "COLONY"), (city, "CITY")]
+        pairs = items
+    elif style < 0.38:
+        # hash/prefix forms: "H#123 St#4 Nishat Colony Lahore"
+        hp = rng.choice(MESSY_HOUSE_PRE).replace(" ", "")
+        sp = rng.choice(MESSY_STREET_PRE).replace(" ", "")
+        pairs = join([(hp + h, "HOUSE"), (sp + _street_token(rng), "STREET"),
+                      (colony, "COLONY"), (city, "CITY")])
+    elif style < 0.55:
+        # Urdu-mixed: "Makan 123 Gali 4 Nishat Colony Lahore"
+        pairs = join([(rng.choice(URDU_HOUSE), None), (h, "HOUSE"),
+                      (rng.choice(URDU_STREET).split()[0], None),
+                      (_street_token(rng), "STREET"),
+                      (colony, "COLONY"), (city, "CITY")])
+    elif style < 0.68:
+        # abbreviations + periods: "H 123, St. 4, Blk C, Nishat Colony, Lahore"
+        pairs = join([("H", None), (h, "HOUSE"),
+                      (rng.choice(["St.", "St", "Rd."]), None),
+                      (_street_token(rng), "STREET"),
+                      (rng.choice(["Blk", "Block", "Sec"]), None),
+                      (_block_token(rng), "BLOCK"),
+                      (colony, "COLONY"), (city, "CITY")])
+    elif style < 0.80:
+        # lowercase everything: "house 123 street 4 nishat colony lahore"
+        items = [("house", None), (h.lower(), "HOUSE"),
+                 ("street", None), (_street_token(rng), "STREET"),
+                 (colony.lower(), "COLONY"), (city.lower(), "CITY")]
+        pairs = join(items)
+    elif style < 0.90:
+        # landmark + trailing country: "Near Main Bazaar House 45 Street 2 Ichhra Lahore Pakistan"
+        pairs = join([("Near", None), ("Main", None), ("Bazaar", None),
+                      ("House", None), (h, "HOUSE"),
+                      ("Street", None), (_street_token(rng), "STREET"),
+                      (colony, "COLONY"), (city, "CITY"), ("Pakistan", None)])
+    else:
+        # fraction / sector forms: "123/4, Sector G-13, Islamabad"
+        if not lahore and rng.random() < 0.5:
+            pairs = join([(f"{h}/{rng.randint(1,9)}", "HOUSE"),
+                          ("Sector", None), (f"{_block_token(rng)}-{rng.randint(1,17)}", "BLOCK"),
+                          (colony, "COLONY"), (city, "CITY")])
+        else:
+            pairs = join([("Plot", None), ("No", None), (h, "HOUSE"),
+                          ("Block", None), (_block_token(rng), "BLOCK"),
+                          (colony, "COLONY"), (city, "CITY")])
+
+    return _build(pairs)
+
+
+def generate(n: int, seed: int = 42, messy_frac: float = 0.35) -> list[dict]:
     rng = random.Random(seed)
     out = []
     for _ in range(n):
-        tokens, labels = generate_one(rng)
+        if rng.random() < messy_frac:
+            tokens, labels = generate_messy(rng)
+        else:
+            tokens, labels = generate_one(rng)
         out.append({"tokens": tokens, "labels": labels,
                     "text": " ".join(tokens).replace(" ,", ",")})
     return out

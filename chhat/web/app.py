@@ -39,6 +39,18 @@ STRINGS = {
         "address_ph": "House 123, Street 4, Block C, Nishat Colony, Lahore",
         "analyze": "Analyze my roof",
         "demo_badge": "DEMO DATA — set GOOGLE_SOLAR_API_KEY for live roof data",
+        "step1": "Address", "step2": "Location", "step3": "Report",
+        "parsed_title": "Parsed address", "confirm": "Confirm location →",
+        "pin_hint": "Drag the pin to your exact rooftop, then confirm.",
+        "score_title": "Chhat Score", "roof_title": "Roof layout",
+        "quote_title": "Quote breakdown", "working": "Working…",
+        "house": "House", "street": "Street", "block": "Block",
+        "colony": "Colony", "city": "City",
+        "system_size": "System size", "panels": "Panels (550W)",
+        "yearly_gen": "Yearly generation", "payback": "Payback period",
+        "yrs": "yrs", "system_cost": "System cost", "saved_year": "Saved / year",
+        "savings_25y": "25-yr savings", "area_shade_payback": "Area / Shade / Payback",
+        "usable_roof": "Usable roof",
     },
     "ur": {
         "title": "چھت — شمسی توانائی کی ذہین معلومات",
@@ -46,6 +58,19 @@ STRINGS = {
         "address_ph": "مکان 123، گلی 4، بلاک C، نشاط کالونی، لاہور",
         "analyze": "میری چھت کا تجزیہ کریں",
         "demo_badge": "ڈیمو ڈیٹا — اصل ڈیٹا کے لیے GOOGLE_SOLAR_API_KEY درج کریں",
+        "step1": "پتہ", "step2": "مقام", "step3": "رپورٹ",
+        "parsed_title": "پتے کی تفصیل", "confirm": "← مقام کی تصدیق کریں",
+        "pin_hint": "پن کو اپنی ٹھیک چھت پر لگائیں، پھر تصدیق کریں۔",
+        "score_title": "چھت اسکور", "roof_title": "چھت کا خاکہ",
+        "quote_title": "قیمت کی تفصیل", "working": "کام جاری…",
+        "house": "مکان", "street": "گلی", "block": "بلاک",
+        "colony": "کالونی", "city": "شہر",
+        "system_size": "سسٹم سائز", "panels": "پینل (550 واٹ)",
+        "yearly_gen": "سالانہ بجلی", "payback": "واپسی کی مدت",
+        "yrs": "سال", "system_cost": "سسٹم کی قیمت", "saved_year": "سالانہ بچت",
+        "savings_25y": "25 سالہ بچت",
+        "area_shade_payback": "رقبہ / سایہ / واپسی",
+        "usable_roof": "قابل استعمال چھت",
     },
 }
 
@@ -54,7 +79,9 @@ STRINGS = {
 def index():
     lang = request.args.get("lang", "en")
     s = STRINGS.get(lang, STRINGS["en"])
-    return render_template("index.html", s=s, lang=lang)
+    import json as _json
+    return render_template("index.html", s=s, lang=lang,
+                           ui_json=_json.dumps(s, ensure_ascii=False))
 
 
 @app.post("/api/parse")
