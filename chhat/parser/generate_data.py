@@ -188,17 +188,34 @@ def generate_messy(rng: random.Random) -> tuple[list[str], list[str]]:
         items += [(colony, "COLONY"), (city, "CITY")]
         pairs = items
     elif style < 0.38:
-        # hash/prefix forms: "H#123 St#4 Nishat Colony Lahore"
+        # hash/prefix forms: "H#123 St#4 Nishat Colony Lahore", "H# 200 St # 11 ..."
         hp = rng.choice(MESSY_HOUSE_PRE).replace(" ", "")
         sp = rng.choice(MESSY_STREET_PRE).replace(" ", "")
-        pairs = join([(hp + h, "HOUSE"), (sp + _street_token(rng), "STREET"),
-                      (colony, "COLONY"), (city, "CITY")])
+        if rng.random() < 0.3:
+            # spaced hash: "H# 200", "St # 11"
+            pairs = join([("H#", None), (h, "HOUSE"),
+                          ("St", None), ("#", None), (_street_token(rng), "STREET"),
+                          (colony, "COLONY"), (city, "CITY")])
+        else:
+            pairs = join([(hp + h, "HOUSE"), (sp + _street_token(rng), "STREET"),
+                          (colony, "COLONY"), (city, "CITY")])
     elif style < 0.55:
-        # Urdu-mixed: "Makan 123 Gali 4 Nishat Colony Lahore"
-        pairs = join([(rng.choice(URDU_HOUSE), None), (h, "HOUSE"),
-                      (rng.choice(URDU_STREET).split()[0], None),
-                      (_street_token(rng), "STREET"),
-                      (colony, "COLONY"), (city, "CITY")])
+        # Urdu-mixed: "Makan 123 Gali 4 ...", "Makan No 78 ...", "Gali 10 Makan 55 ..."
+        uh = rng.choice(URDU_HOUSE)
+        us = rng.choice(URDU_STREET).split()[0]
+        r = rng.random()
+        if r < 0.35:
+            pairs = join([(uh, None), ("No", None), (h, "HOUSE"),
+                          (colony, "COLONY"), (city, "CITY")])
+        elif r < 0.55:
+            # reversed order: street first
+            pairs = join([(us, None), (_street_token(rng), "STREET"),
+                          (uh, None), (h, "HOUSE"),
+                          (colony, "COLONY"), (city, "CITY")])
+        else:
+            pairs = join([(uh, None), (h, "HOUSE"),
+                          (us, None), (_street_token(rng), "STREET"),
+                          (colony, "COLONY"), (city, "CITY")])
     elif style < 0.68:
         # abbreviations + periods: "H 123, St. 4, Blk C, Nishat Colony, Lahore"
         pairs = join([("H", None), (h, "HOUSE"),
@@ -208,27 +225,53 @@ def generate_messy(rng: random.Random) -> tuple[list[str], list[str]]:
                       (_block_token(rng), "BLOCK"),
                       (colony, "COLONY"), (city, "CITY")])
     elif style < 0.80:
-        # lowercase everything: "house 123 street 4 nishat colony lahore"
-        items = [("house", None), (h.lower(), "HOUSE"),
-                 ("street", None), (_street_token(rng), "STREET"),
-                 (colony.lower(), "COLONY"), (city.lower(), "CITY")]
+        # lowercase everything: "house 123 street 4 block c nishat colony lahore"
+        # "house no 9 street no 11 shadman lahore"
+        if rng.random() < 0.4:
+            items = [("house", None), ("no", None), (h.lower(), "HOUSE"),
+                     ("street", None), ("no", None), (_street_token(rng), "STREET"),
+                     (colony.lower(), "COLONY"), (city.lower(), "CITY")]
+        else:
+            items = [("house", None), (h.lower(), "HOUSE"),
+                     ("street", None), (_street_token(rng), "STREET")]
+            if rng.random() < 0.6:
+                items += [("block", None), (_block_token(rng).lower(), "BLOCK")]
+            items += [(colony.lower(), "COLONY"), (city.lower(), "CITY")]
         pairs = join(items)
-    elif style < 0.90:
-        # landmark + trailing country: "Near Main Bazaar House 45 Street 2 Ichhra Lahore Pakistan"
-        pairs = join([("Near", None), ("Main", None), ("Bazaar", None),
-                      ("House", None), (h, "HOUSE"),
-                      ("Street", None), (_street_token(rng), "STREET"),
-                      (colony, "COLONY"), (city, "CITY"), ("Pakistan", None)])
+    elif style < 0.86:
+        # house-only, no street/block: "123/4 Nishat Colony Lahore"
+        pairs = join([(h, "HOUSE"), (colony, "COLONY"), (city, "CITY")])
+    elif style < 0.93:
+        # sector form: "12-B, St 7, Sector G-13, Islamabad"
+        pairs = join([(_house_token(rng)[0], "HOUSE"),
+                      (rng.choice(["St", "St."]), None),
+                      (_street_token(rng), "STREET"),
+                      ("Sector", None),
+                      (f"{_block_token(rng)}-{rng.randint(1, 17)}", "BLOCK"),
+                      (colony, "COLONY"), (city, "CITY")])
+    elif style < 0.97:
+        # attached prefixes: "H.No.7 St.No.3 Block B Valencia Town Lahore"
+        # (whole token is the entity; prefix stripped in post-processing)
+        pairs = join([(f"H.No.{h}", "HOUSE"), (f"St.No.{_street_token(rng)}", "STREET"),
+                      ("Block", None), (_block_token(rng), "BLOCK"),
+                      (colony, "COLONY"), (city, "CITY")])
     else:
-        # fraction / sector forms: "123/4, Sector G-13, Islamabad"
-        if not lahore and rng.random() < 0.5:
+        # fraction / plot-no / landmark forms
+        r = rng.random()
+        if not lahore and r < 0.4:
             pairs = join([(f"{h}/{rng.randint(1,9)}", "HOUSE"),
                           ("Sector", None), (f"{_block_token(rng)}-{rng.randint(1,17)}", "BLOCK"),
                           (colony, "COLONY"), (city, "CITY")])
-        else:
+        elif r < 0.7:
             pairs = join([("Plot", None), ("No", None), (h, "HOUSE"),
                           ("Block", None), (_block_token(rng), "BLOCK"),
                           (colony, "COLONY"), (city, "CITY")])
+        else:
+            # landmark + trailing country: "Near Main Bazaar House 45 ..."
+            pairs = join([("Near", None), ("Main", None), ("Bazaar", None),
+                          ("House", None), (h, "HOUSE"),
+                          ("Street", None), (_street_token(rng), "STREET"),
+                          (colony, "COLONY"), (city, "CITY"), ("Pakistan", None)])
 
     return _build(pairs)
 

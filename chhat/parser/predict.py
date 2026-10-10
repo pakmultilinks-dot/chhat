@@ -6,6 +6,7 @@ house, street, block, colony, city.
 from __future__ import annotations
 
 import os
+import re
 
 import torch
 
@@ -14,6 +15,21 @@ from .train import LABELS, PAD, UNK, spans_of, tokenize_text
 
 DEFAULT_MODEL = os.path.join(os.path.dirname(__file__), "..", "..",
                              "models", "address_parser.pt")
+
+# Descriptor prefixes people glue onto house/street numbers ("H#123",
+# "St.No.3"). Stripped after tagging so UI + geocoder see clean values.
+_HOUSE_PRE = re.compile(r"^(h#|h\.?no\.?|house#?|plot#?|p#|flat#?|shop#?)\s*", re.I)
+_STREET_PRE = re.compile(r"^(st#?|st\.?\s*no\.?|street#?|gali#?|rd#?)\s*", re.I)
+_EDGE_JUNK = re.compile(r"^[#.\s]+|[#.\s]+$")
+
+
+def _clean(value: str, kind: str) -> str:
+    v = value.strip()
+    if kind == "house":
+        v = _HOUSE_PRE.sub("", v)
+    elif kind == "street":
+        v = _STREET_PRE.sub("", v)
+    return _EDGE_JUNK.sub("", v)
 
 
 class AddressParser:
@@ -40,9 +56,9 @@ class AddressParser:
             "text": text,
             "tokens": tokens,
             "labels": labels,
-            "house": " ".join(fields.get("house", [])),
-            "street": " ".join(fields.get("street", [])),
-            "block": " ".join(fields.get("block", [])),
+            "house": _clean(" ".join(fields.get("house", [])), "house"),
+            "street": _clean(" ".join(fields.get("street", [])), "street"),
+            "block": _clean(" ".join(fields.get("block", [])), "block"),
             "colony": " ".join(fields.get("colony", [])),
             "city": " ".join(fields.get("city", [])),
         }
