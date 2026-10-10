@@ -94,11 +94,14 @@ def _ensure_weights(npz_path: str) -> str:
 
     Serverless deployments exclude the 3.5MB weight file; on first run it is
     fetched once to a writable cache (/tmp on Vercel, repo models/ locally).
+    Proxy env vars are bypassed explicitly (they can hang serverless egress).
     """
     if os.path.exists(npz_path):
         return npz_path
     import urllib.request
 
+    # Bypass any proxy env vars — they hang or break on serverless.
+    opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
     for cache_dir in ("/tmp", os.path.dirname(npz_path)):
         try:
             os.makedirs(cache_dir, exist_ok=True)
@@ -107,8 +110,7 @@ def _ensure_weights(npz_path: str) -> str:
                 return dest
             req = urllib.request.Request(DEFAULT_MODEL_URL,
                                          headers={"User-Agent": "chhat/1.0"})
-            with urllib.request.urlopen(req, timeout=60) as r, \
-                    open(dest, "wb") as f:
+            with opener.open(req, timeout=20) as r, open(dest, "wb") as f:
                 f.write(r.read())
             return dest
         except Exception:
