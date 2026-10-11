@@ -19,10 +19,34 @@ from chhat.layout.optimizer import optimize
 from chhat.parser.predict import AddressParser
 from chhat.quote.engine import chhat_score, load_config, quote
 from chhat.solar.client import SolarError, building_insights, roof_imagery
+from chhat.llm.mode import get_mode as get_llm_mode, get_model as get_llm_model
+from chhat.web import middleware
+from chhat.web.api_v1 import bp as api_v1_bp
 
 app = Flask(__name__)
+middleware.register(app)
+app.register_blueprint(api_v1_bp)
 _parser: AddressParser | None = None
 _config = load_config()
+
+MAX_ADDRESS_LEN = 500
+
+
+class _BadCoords(ValueError):
+    """Raised when lat/lng fail validation."""
+
+
+def _parse_coords(lat, lng):
+    """Validate and convert lat/lng. Raises _BadCoords on any problem."""
+    try:
+        lat_f, lng_f = float(lat), float(lng)
+    except (TypeError, ValueError):
+        raise _BadCoords("lat/lng must be numbers")
+    if not (-90 <= lat_f <= 90):
+        raise _BadCoords("lat out of range (-90..90)")
+    if not (-180 <= lng_f <= 180):
+        raise _BadCoords("lng out of range (-180..180)")
+    return lat_f, lng_f
 
 
 def parser() -> AddressParser:
@@ -82,6 +106,8 @@ STRINGS = {
         "venture_val": "Validation plan: partner installer price lists + 5–10 real installation records, to publish measured quote error.",
         "local_global": "Built for Pakistani addresses and rooftops first — generalizing to dense cities anywhere.",
         "see_ai": "See what our AI sees →",
+        "explain_btn": "Explain my quote in plain words →",
+        "explain_unavailable": "Plain-language explanations are not available right now (LLM not configured on this host).",
         "overlay_label": "Show predicted roofs",
         "conf_label": "Model confidence",
         "ok_badge": "Model confident — roofs detected",
@@ -139,6 +165,8 @@ STRINGS = {
         "venture_val": "تصدیقی منصوبہ: پارٹنر انسٹالر کی قیمتوں کی فہرستیں + 5 تا 10 حقیقی تنصیبات کا ریکارڈ، تاکہ ناپی گئی غلطی شائع کی جا سکے۔",
         "local_global": "پہلے پاکستانی پتوں اور چھتوں کے لیے بنائی گئی — دنیا کے گنجان شہروں تک پھیلنے کے لیے۔",
         "see_ai": "دیکھیں ہمارا AI کیا دیکھتا ہے ←",
+        "explain_btn": "میری قیمت سادہ الفاظ میں سمجھائیں ←",
+        "explain_unavailable": "سادہ الفاظ میں وضاحت ابھی دستیاب نہیں (اس ہوسٹ پر LLM سیٹ نہیں ہے)۔",
         "overlay_label": "متوقع چھتیں دکھائیں",
         "conf_label": "ماڈل کا اعتماد",
         "ok_badge": "ماڈل پراعتماد — چھتیں ملیں",
@@ -154,10 +182,17 @@ def index():
     lang = request.args.get("lang", "en")
     s = STRINGS.get(lang, STRINGS["en"])
     import json as _json
+    llm_mode = get_llm_mode()
+    # The key is injected into the page ONLY in direct mode (preview-only),
+    # and only from the environment. Never hardcoded, never logged.
+    llm_key = os.environ.get("OPENROUTER_API_KEY") if llm_mode == "direct" else None
     return render_template("index.html", s=s, lang=lang,
                            ui_json=_json.dumps(s, ensure_ascii=False),
                            ui_all=_json.dumps(STRINGS, ensure_ascii=False),
-                           golden_json=_golden_json_text())
+                           golden_json=_golden_json_text(),
+                           llm_mode=llm_mode,
+                           llm_model=get_llm_model(),
+                           llm_key=llm_key)
 
 
 _GOLDEN_PATH = os.path.join(os.path.dirname(__file__), "..", "..",
@@ -185,6 +220,8 @@ def api_parse():
     text = (request.json or {}).get("address", "").strip()
     if not text:
         return jsonify({"error": "empty address"}), 400
+    if len(text) > MAX_ADDRESS_LEN:
+        return jsonify({"error": f"address too long (max {MAX_ADDRESS_LEN} chars)"}), 400
     p = parser().parse(text)
     return jsonify(p)
 
@@ -196,6 +233,13 @@ def api_analyze():
     lat, lng = body.get("lat"), body.get("lng")
     if not text:
         return jsonify({"error": "empty address"}), 400
+    if len(text) > MAX_ADDRESS_LEN:
+        return jsonify({"error": f"address too long (max {MAX_ADDRESS_LEN} chars)"}), 400
+    if lat is not None or lng is not None:
+        try:
+            lat, lng = _parse_coords(lat, lng)
+        except _BadCoords as e:
+            return jsonify({"error": str(e)}), 400
     try:
         parsed = parser().parse(text)
         if lat is None or lng is None:
@@ -267,6 +311,10 @@ def api_roofseg():
     lat, lng = body.get("lat"), body.get("lng")
     if lat is None or lng is None:
         return jsonify({"error": "missing lat/lng"}), 400
+    try:
+        lat, lng = _parse_coords(lat, lng)
+    except _BadCoords as e:
+        return jsonify({"error": str(e)}), 400
     try:
         from chhat.roofseg.predict import MODEL_LABELS, predict_best
         import numpy as np

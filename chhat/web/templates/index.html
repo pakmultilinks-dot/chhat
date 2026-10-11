@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Noto+Nastaliq+Urdu:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&family=Noto+Nastaliq+Urdu:wght@600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --night0:#03060e; --night1:#071120; --night2:#0d1a30; --line:#1e2f4d;
@@ -15,7 +15,7 @@
     --roof:#34d399; --roof-deep:#10b981;
     --ink:#eef3fb; --muted:#93a4bd; --faint:#5d7189;
     --card:#0b1628; --card2:#0e1c33;
-    --display:"Space Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --display:"Unbounded","Space Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
     --urdu:"Noto Nastaliq Urdu","Jameel Noori Nastaleeq",serif;
   }
   *{box-sizing:border-box}
@@ -87,8 +87,8 @@
     }
   }
   .wordmark-en{
-    font-family:var(--display); font-weight:700; letter-spacing:16px; font-size:24px;
-    color:var(--ink); margin:4px 0 0; text-indent:16px;
+    font-family:var(--display); font-weight:700; letter-spacing:9px; font-size:21px;
+    color:var(--ink); margin:4px 0 0; text-indent:9px;
     text-shadow:0 0 30px #f59e0b33;
   }
   .wordmark-en small{display:block; letter-spacing:4px; font-size:12px; color:var(--muted);
@@ -438,6 +438,8 @@
     <p style="font-size:12px;color:var(--faint)" id="fineprint"></p>
     <button class="go" id="seeAi" data-i18n="see_ai">{{ s.see_ai }}</button>
     <div id="err3" class="err"></div>
+    <button class="go" id="explainBtn" data-i18n="explain_btn" style="background:linear-gradient(135deg,#0e2a1f,#0a1f16);color:var(--roof);box-shadow:0 6px 22px #10b98133,inset 0 1px 0 #34d39933;border:1px solid #10b98155">{{ s.explain_btn }}</button>
+    <div id="explainBox" class="card" style="display:none;margin:14px 0 0;padding:18px;font-size:15px;line-height:1.65;color:#dbe7f5"></div>
   </div>
 
   <div class="card step" id="step4">
@@ -486,6 +488,15 @@
 </footer>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script id="goldenData" type="application/json">{{ golden_json | safe }}</script>
+<script>
+/* LLM transport config from the server. The key is present ONLY in direct
+   (preview) mode, read from the OPENROUTER_API_KEY env var. Never hardcoded. */
+window.CHAT_LLM = {
+  mode: "{{ llm_mode }}",
+  model: "{{ llm_model }}"{% if llm_key %},
+  key: "{{ llm_key }}"{% endif %}
+};
+</script>
 <script>
 const UI_ALL = {{ ui_all | safe }};
 let LANG = "{{ lang }}";
@@ -785,6 +796,80 @@ $('ovToggle').onchange = () => {
 };
 
 $('backReport').onclick = () => show('step3', 'pill3');
+
+/* ---------- explain my quote (LLM, dual transport) ---------- */
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+/* Mirrors chhat/llm/client.py prompt building for direct (browser) mode. */
+function explainMessages(report, lang){
+  const ur = lang === 'ur';
+  const system = ur
+    ? "آپ چھت کے دیانت دار سولر مشیر ہیں، پاکستانی گھر مالکان کے لیے۔ چھت کی سولر رپورٹ کو سادہ اور دوستانہ اردو میں سمجھائیں۔ اصول: صرف رپورٹ میں دیے گئے اعداد استعمال کریں؛ قیمتیں، بچت یا واپسی کی مدت خود نہ گھڑیں۔ اگر رپورٹ ڈیمو/تخمینہ ہے تو صاف کہیں۔ 180 الفاظ سے کم۔"
+    : "You are Chhat's honest solar advisor for Pakistani homeowners. You explain a rooftop solar report in simple, friendly words. Rules: use ONLY the numbers given in the report; never invent prices, savings, or payback figures. If the report is marked as a demo/estimate, say so plainly. Keep it short (under 180 words). No marketing fluff, no emojis.";
+  const score = report.score || {}, quote = report.quote || {}, layout = report.layout || {};
+  const facts =
+    "Chhat Score: " + (score.score !== undefined ? score.score : "?") + "/100. " +
+    "Panels: " + (layout.panel_count !== undefined ? layout.panel_count : "?") +
+    " (" + (layout.system_kw !== undefined ? layout.system_kw : "?") + " kW). " +
+    "System cost: Rs " + (quote.equipment_cost_pkr !== undefined ? quote.equipment_cost_pkr : "?") + " (estimate). " +
+    "Yearly savings: Rs " + (quote.annual_savings_pkr !== undefined ? quote.annual_savings_pkr : "?") + " (estimate). " +
+    "Payback: " + (quote.payback_years !== undefined ? quote.payback_years : "?") + " years. " +
+    "Usable roof: " + (layout.usable_area_m2 !== undefined ? layout.usable_area_m2 : "?") + " m2. " +
+    (report.demo ? "This is a DEMO with estimated figures." : "Figures from live analysis.");
+  const ask = ur ? "اس رپورٹ کو سادہ اردو میں سمجھائیں۔" : "Explain this report in simple words.";
+  return [
+    {role: "system", content: system},
+    {role: "user", content: facts + "\n\n" + ask}
+  ];
+}
+async function explainDirect(report, lang){
+  const cfg = window.CHAT_LLM || {};
+  if(!cfg.key) throw new Error("LLM key not available in this preview");
+  const r = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {"Content-Type": "application/json",
+              "Authorization": "Bearer " + cfg.key,
+              "HTTP-Referer": "https://github.com/pakmultilinks-dot/chhat",
+              "X-Title": "Chhat solar advisor"},
+    body: JSON.stringify({model: cfg.model || "claude-haiku-5.5:free",
+                          messages: explainMessages(report, lang),
+                          max_tokens: 800})
+  });
+  const j = await r.json().catch(() => ({}));
+  if(!r.ok) throw new Error((j.error && j.error.message) || ("LLM error HTTP " + r.status_code));
+  const text = j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content;
+  if(!text || !text.trim()) throw new Error("The model returned an empty answer.");
+  return text.trim();
+}
+$('explainBtn').onclick = async () => {
+  const box = $('explainBox'), btn = $('explainBtn');
+  if(!lastReport){ box.style.display = 'block'; box.textContent = UI.explain_unavailable; return; }
+  box.style.display = 'block';
+  box.innerHTML = '<span class="spinner"></span> ' + escapeHtml(UI.working);
+  btn.disabled = true;
+  try{
+    const mode = (window.CHAT_LLM || {}).mode || 'off';
+    let text;
+    if(mode === 'server'){
+      const r = await fetch('/api/v1/explain', {method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({report: lastReport, lang: LANG})});
+      const j = await r.json().catch(() => ({}));
+      if(!r.ok) throw new Error(j.error || ("HTTP " + r.status_code));
+      text = j.explanation;
+    }else if(mode === 'direct'){
+      text = await explainDirect(lastReport, LANG);
+    }else{
+      throw new Error(UI.explain_unavailable);
+    }
+    box.textContent = text;
+  }catch(e){
+    box.innerHTML = '<span class="err">' + escapeHtml(e.message) + '</span>';
+  }
+  btn.disabled = false;
+};
 
 applyLang(LANG);
 </script>
