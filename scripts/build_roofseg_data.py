@@ -106,20 +106,30 @@ def main():
         py = (tlat_north - lat) / (tlat_north - tlat_south) * H
         return int(px), int(py)
 
-    # 3. rasterize masks
-    mask = np.zeros((H, W), np.uint8)
-    for pts in polys:
-        pp = np.array([project(la, lo) for la, lo in pts], np.int32)
-        cv2.fillPoly(mask, [pp], 1)
+    # 3. rasterize masks (cached)
+    mosaic_path = os.path.join(OUT, "_mosaic.png")
+    mask_path = os.path.join(OUT, "_mask.png")
+    if os.path.exists(mosaic_path) and os.path.exists(mask_path):
+        print("using cached mosaic/mask")
+        mosaic = cv2.imread(mosaic_path)
+        mask = cv2.imread(mask_path, cv2.IMREAD_GRAYSCALE) // 255
+        H, W = mask.shape
+    else:
+        mask = np.zeros((H, W), np.uint8)
+        for pts in polys:
+            pp = np.array([project(la, lo) for la, lo in pts], np.int32)
+            cv2.fillPoly(mask, [pp], 1)
+        cv2.imwrite(mosaic_path, mosaic)
+        cv2.imwrite(mask_path, mask * 255)
     print(f"mask building px: {mask.sum()} ({100*mask.sum()/mask.size:.1f}%)")
 
-    # 4. chip 256x256, keep 5-95% coverage
+    # 4. chip 256x256 stride 128, keep 1-95% coverage
     chips = []
-    for cy in range(0, H - 255, 256):
-        for cx in range(0, W - 255, 256):
+    for cy in range(0, H - 255, 128):
+        for cx in range(0, W - 255, 128):
             m = mask[cy:cy+256, cx:cx+256]
             cov = m.mean()
-            if 0.05 <= cov <= 0.95:
+            if 0.01 <= cov <= 0.95:
                 chips.append((mosaic[cy:cy+256, cx:cx+256].copy(), (m * 255).astype(np.uint8)))
     print(f"chips kept: {len(chips)}")
     rng = np.random.default_rng(7)
