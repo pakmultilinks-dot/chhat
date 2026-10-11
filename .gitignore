@@ -1,8 +1,0 @@
-.venv/
-.tmp/
-__pycache__/
-*.pyc
-models/*.pt
-.env
-data/
-logs/
