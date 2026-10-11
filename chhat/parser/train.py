@@ -22,7 +22,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset
 
-from .generate_data import generate
+from .generate_data import generate, generate_multicity
 from .model import AddressTagger
 
 PAD, UNK = "<pad>", "<unk>"
@@ -127,6 +127,10 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--n-train", type=int, default=8000)
     ap.add_argument("--n-test", type=int, default=1500)
+    ap.add_argument("--n-multi", type=int, default=0,
+                    help="extra city-specific training addresses (Karachi/Islamabad/Rawalpindi/Faisalabad)")
+    ap.add_argument("--n-test-multi", type=int, default=0,
+                    help="held-out city-specific test addresses (different seed)")
     ap.add_argument("--epochs", type=int, default=12)
     ap.add_argument("--batch-size", type=int, default=64)
     ap.add_argument("--lr", type=float, default=1e-3)
@@ -141,12 +145,21 @@ def main() -> None:
     print("generating data...", flush=True)
     train_rows = generate(args.n_train, seed=args.seed)
     test_rows = generate(args.n_test, seed=args.seed + 999)
+    if args.n_multi:
+        train_rows += generate_multicity(args.n_multi, seed=args.seed + 7)
+    multi_test_rows = []
+    if args.n_test_multi:
+        multi_test_rows = generate_multicity(args.n_test_multi, seed=args.seed + 1007)
     vocab = build_vocab(train_rows)
 
     train_loader = DataLoader(AddrDataset(train_rows, vocab), batch_size=args.batch_size,
                               shuffle=True, collate_fn=collate)
     test_loader = DataLoader(AddrDataset(test_rows, vocab), batch_size=args.batch_size,
                              collate_fn=collate)
+    multi_loader = None
+    if multi_test_rows:
+        multi_loader = DataLoader(AddrDataset(multi_test_rows, vocab),
+                                  batch_size=args.batch_size, collate_fn=collate)
 
     model = AddressTagger(len(vocab), len(LABELS)).to(device)
     opt = torch.optim.Adam(model.parameters(), lr=args.lr)
@@ -170,6 +183,13 @@ def main() -> None:
 
     final = evaluate(model, test_loader, device)
     print("FINAL:", json.dumps(final, indent=2))
+    metrics = {"test": final, "n_train": args.n_train, "n_test": args.n_test,
+               "n_multi": args.n_multi, "epochs": args.epochs, "seed": args.seed}
+    if multi_loader is not None:
+        multi_final = evaluate(model, multi_loader, device)
+        print("FINAL multi-city:", json.dumps(multi_final, indent=2))
+        metrics["test_multicity"] = multi_final
+        metrics["n_test_multi"] = args.n_test_multi
 
     os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
     torch.save({"state_dict": model.state_dict(), "vocab": vocab,
@@ -177,8 +197,7 @@ def main() -> None:
                                             "num_layers": 2, "dropout": 0.2}},
                args.out)
     with open(os.path.splitext(args.out)[0] + "_metrics.json", "w") as f:
-        json.dump({"test": final, "n_train": args.n_train, "n_test": args.n_test,
-                   "epochs": args.epochs, "seed": args.seed}, f, indent=2)
+        json.dump(metrics, f, indent=2)
     print(f"saved -> {args.out}")
 
 

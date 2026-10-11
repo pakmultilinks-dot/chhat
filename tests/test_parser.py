@@ -80,6 +80,74 @@ TRICKY_CASES = [
 ]
 
 
+# Wave 8: multi-city tricky cases — Karachi / Islamabad / Rawalpindi / Faisalabad
+# real-world messy formats. 28 cases.
+MULTICITY_TRICKY_CASES = [
+    # --- Karachi ---
+    ("House R-123, Block 13, Gulshan-e-Iqbal, Karachi",
+     {"house": "R-123", "block": "13", "colony": "Gulshan-e-Iqbal", "city": "Karachi"}),
+    ("Plot 45-C, Khayaban-e-Ittehad, DHA Phase 6, Karachi",
+     {"house": "45-C", "street": "Khayaban-e-Ittehad",
+      "colony": "DHA Phase 6", "city": "Karachi"}),
+    ("House 5/12, North Nazimabad, Karachi",
+     {"house": "5/12", "colony": "North Nazimabad", "city": "Karachi"}),
+    ("House 23, Block 5, Clifton, Karachi",
+     {"house": "23", "block": "5", "colony": "Clifton", "city": "Karachi"}),
+    ("Flat 12, Block 3, Gulshan-e-Iqbal, Karachi",
+     {"house": "12", "block": "3", "colony": "Gulshan-e-Iqbal", "city": "Karachi"}),
+    ("H#R-123 Block 13 Gulshan-e-Iqbal Karachi",
+     {"house": "R-123", "block": "13", "colony": "Gulshan-e-Iqbal", "city": "Karachi"}),
+    ("Makan R-45 Block 7 Gulshan-e-Iqbal Karachi",
+     {"house": "R-45", "block": "7", "colony": "Gulshan-e-Iqbal", "city": "Karachi"}),
+    ("house r-123 block 13 gulshan-e-iqbal karachi",
+     {"house": "r-123", "block": "13", "colony": "gulshan-e-iqbal", "city": "karachi"}),
+    ("Plot 45-C Khayaban-e-Ittehad DHA Phase 6 Karachi",
+     {"house": "45-C", "street": "Khayaban-e-Ittehad",
+      "colony": "DHA Phase 6", "city": "Karachi"}),
+    ("Flat 7, Block 2, North Nazimabad, Karachi",
+     {"house": "7", "block": "2", "colony": "North Nazimabad", "city": "Karachi"}),
+    # --- Islamabad ---
+    ("House 123, Street 45, Sector G-13/2, Islamabad",
+     {"house": "123", "street": "45", "block": "G-13/2", "city": "Islamabad"}),
+    ("House 8, Street 12, F-10/3, Islamabad",
+     {"house": "8", "street": "12", "colony": "F-10/3", "city": "Islamabad"}),
+    ("Plot 22, E-11/4, Islamabad",
+     {"house": "22", "colony": "E-11/4", "city": "Islamabad"}),
+    ("House 56, Margalla Town, Islamabad",
+     {"house": "56", "colony": "Margalla Town", "city": "Islamabad"}),
+    ("H 123 St 45 G-13/2 Islamabad",
+     {"house": "123", "street": "45", "colony": "G-13/2", "city": "Islamabad"}),
+    ("Makan 77 Gali 3 E-11 Islamabad",
+     {"house": "77", "street": "3", "colony": "E-11", "city": "Islamabad"}),
+    ("House 123 Street 45 Sector G-13/2 Islamabad",
+     {"house": "123", "street": "45", "block": "G-13/2", "city": "Islamabad"}),
+    ("House 9, Street 3, E-11/4, Islamabad",
+     {"house": "9", "street": "3", "colony": "E-11/4", "city": "Islamabad"}),
+    # --- Rawalpindi ---
+    ("House 234, Block C, Satellite Town, Rawalpindi",
+     {"house": "234", "block": "C", "colony": "Satellite Town", "city": "Rawalpindi"}),
+    ("House 56, Street 7, Bahria Town, Rawalpindi",
+     {"house": "56", "street": "7", "colony": "Bahria Town", "city": "Rawalpindi"}),
+    ("Plot 89, Chaklala Scheme III, Rawalpindi",
+     {"house": "89", "colony": "Chaklala Scheme III", "city": "Rawalpindi"}),
+    ("H#234 Block C Satellite Town Rawalpindi",
+     {"house": "234", "block": "C", "colony": "Satellite Town", "city": "Rawalpindi"}),
+    ("Shop 5, Main Road, Satellite Town, Rawalpindi",
+     {"house": "5", "colony": "Satellite Town", "city": "Rawalpindi"}),
+    # --- Faisalabad ---
+    ("House 78, Block B, Madina Town, Faisalabad",
+     {"house": "78", "block": "B", "colony": "Madina Town", "city": "Faisalabad"}),
+    ("Plot 12, Block A, DHA, Faisalabad",
+     {"house": "12", "block": "A", "colony": "DHA", "city": "Faisalabad"}),
+    ("House 33, Street 5, Model City, Faisalabad",
+     {"house": "33", "street": "5", "colony": "Model City", "city": "Faisalabad"}),
+    ("Makan 78 Gali 5 Madina Town Faisalabad",
+     {"house": "78", "street": "5", "colony": "Madina Town", "city": "Faisalabad"}),
+    ("House 100, Wadi-e-Sitara, Faisalabad",
+     {"house": "100", "colony": "Wadi-e-Sitara", "city": "Faisalabad"}),
+]
+
+
 class TestParser(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -100,6 +168,9 @@ class TestParser(unittest.TestCase):
 
     def test_tricky_cases(self):
         self._check(TRICKY_CASES)
+
+    def test_multicity_cases(self):
+        self._check(MULTICITY_TRICKY_CASES)
 
 
 if __name__ == "__main__":

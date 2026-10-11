@@ -23,9 +23,19 @@ ADDRESSES = [
     "House 123, Street 4, Block C, Nishat Colony, Lahore",
     "H#45 St 7 Nishat Colony Lahore",
     "Makan 89, Gali No 2, Nishat Colony, Lahore",
+    # Wave 8: multi-city variants
+    "House R-123, Block 13, Gulshan-e-Iqbal, Karachi",
+    "House 123, Street 45, Sector G-13/2, Islamabad",
 ]
 
-# DEMO pin: central Lahore (used only when no geocoding key is set)
+# DEMO pins per city (used only when no geocoding key is set)
+DEMO_PINS = {
+    "Lahore": (31.5204, 74.3587),
+    "Karachi": (24.8607, 67.0011),
+    "Islamabad": (33.6844, 73.0479),
+    "Rawalpindi": (33.6000, 73.0677),
+    "Faisalabad": (31.4187, 73.0791),
+}
 DEMO_PIN = (31.5204, 74.3587)
 
 
@@ -48,7 +58,7 @@ def main() -> None:
             print(f"GEOCODE: {lat:.5f}, {lng:.5f} ({g['confidence']})")
             print("  formatted:", g["formatted_address"])
         except GeocodeError as e:
-            lat, lng = DEMO_PIN
+            lat, lng = DEMO_PINS.get(p["city"], DEMO_PIN)
             print(f"GEOCODE: skipped ({e}) -> DEMO pin {lat}, {lng}")
 
         roof = building_insights(lat, lng)

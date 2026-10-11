@@ -1,12 +1,20 @@
 {
   "test": {
+    "token_accuracy": 0.9999521919969403,
+    "entity_precision": 1.0,
+    "entity_recall": 0.9998843930635838,
+    "entity_f1": 0.9999421931903578
+  },
+  "n_train": 10000,
+  "n_test": 2000,
+  "n_multi": 2500,
+  "epochs": 15,
+  "seed": 42,
+  "test_multicity": {
     "token_accuracy": 1.0,
     "entity_precision": 1.0,
     "entity_recall": 1.0,
     "entity_f1": 1.0
   },
-  "n_train": 10000,
-  "n_test": 2000,
-  "epochs": 15,
-  "seed": 42
+  "n_test_multi": 600
 }

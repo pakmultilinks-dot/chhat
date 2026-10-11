@@ -289,6 +289,172 @@ def generate(n: int, seed: int = 42, messy_frac: float = 0.35) -> list[dict]:
     return out
 
 
+# ----------------------------------------------------------------------------
+# Multi-city expansion (Wave 8): city-specific address formats so judges can
+# type ANY Pakistani address, not just Lahore.
+# ----------------------------------------------------------------------------
+
+def _khi_house(rng: random.Random) -> str:
+    """Karachi house numbers: R-123, 5/12, 23-A, plain numbers."""
+    r = rng.random()
+    if r < 0.4:
+        return f"R-{rng.randint(1, 999)}"
+    if r < 0.65:
+        return f"{rng.randint(1, 60)}/{rng.randint(1, 40)}"
+    if r < 0.85:
+        return f"{rng.randint(1, 999)}-{rng.choice('ABCD')}"
+    return str(rng.randint(1, 999))
+
+
+def _isb_sector(rng: random.Random) -> str:
+    """Islamabad sector: G-13/2, F-10/3, E-11/4, I-8/1."""
+    return f"{rng.choice(['G', 'F', 'E', 'I'])}-{rng.randint(8, 17)}/{rng.randint(1, 4)}"
+
+
+def generate_multicity_one(rng: random.Random, city: str) -> tuple[list[str], list[str]]:
+    """One labeled address in a city-specific format. Same BIO convention."""
+    h = _house_token(rng)[0]
+    comma = "," if rng.random() < 0.7 else ""
+
+    def join(items):
+        out = []
+        for i, it in enumerate(items):
+            out.append(it)
+            if comma and i < len(items) - 1:
+                out.append((comma, None))
+        return out
+
+    if city == "Karachi":
+        style = rng.random()
+        if style < 0.30:
+            # "House R-123, Block 13, Gulshan-e-Iqbal, Karachi"
+            pairs = join([(rng.choice(HOUSE_WORDS), None), (_khi_house(rng), "HOUSE"),
+                          ("Block", None), (str(rng.randint(1, 22)), "BLOCK"),
+                          ("Gulshan-e-Iqbal", "COLONY"), ("Karachi", "CITY")])
+        elif style < 0.50:
+            # "Plot 45-C, Khayaban-e-Ittehad, DHA Phase 6, Karachi"
+            pairs = join([("Plot", None), (f"{rng.randint(1,200)}-{rng.choice('ABC')}", "HOUSE"),
+                          ("Khayaban-e-Ittehad", "STREET"),
+                          (f"DHA Phase {rng.randint(2,8)}", "COLONY"), ("Karachi", "CITY")])
+        elif style < 0.65:
+            # "House 5/12, North Nazimabad, Karachi"
+            pairs = join([(rng.choice(HOUSE_WORDS), None), (_khi_house(rng), "HOUSE"),
+                          (rng.choice(["North Nazimabad", "Nazimabad", "Malir Cantt",
+                                       "PECHS", "Scheme 33"]), "COLONY"),
+                          ("Karachi", "CITY")])
+        elif style < 0.80:
+            # "House 23, Block 5, Clifton, Karachi"
+            pairs = join([(rng.choice(HOUSE_WORDS), None), (h, "HOUSE"),
+                          ("Block", None), (str(rng.randint(1, 9)), "BLOCK"),
+                          ("Clifton", "COLONY"), ("Karachi", "CITY")])
+        elif style < 0.90:
+            # "Flat 12, Block 3, Gulshan-e-Iqbal, Karachi"
+            pairs = join([("Flat", None), (str(rng.randint(1, 60)), "HOUSE"),
+                          ("Block", None), (str(rng.randint(1, 22)), "BLOCK"),
+                          ("Gulshan-e-Iqbal", "COLONY"), ("Karachi", "CITY")])
+        else:
+            # messy: "H#R-123 Block 13 Gulshan-e-Iqbal Karachi", "Makan R-45 ..."
+            hp = rng.choice(["H#", "Plot#"])
+            pairs = join([(hp + _khi_house(rng), "HOUSE"),
+                          ("Block", None), (str(rng.randint(1, 22)), "BLOCK"),
+                          ("Gulshan-e-Iqbal", "COLONY"), ("Karachi", "CITY")])
+            if rng.random() < 0.4:
+                # Urdu descriptor stays O: "Makan R-45, Block 7, ..."
+                pairs = join([(rng.choice(URDU_HOUSE), None), (_khi_house(rng), "HOUSE"),
+                              ("Block", None), (str(rng.randint(1, 22)), "BLOCK"),
+                              ("Gulshan-e-Iqbal", "COLONY"), ("Karachi", "CITY")])
+    elif city == "Islamabad":
+        style = rng.random()
+        if style < 0.35:
+            # "House 123, Street 45, Sector G-13/2, Islamabad"
+            pairs = join([(rng.choice(HOUSE_WORDS), None), (h, "HOUSE"),
+                          ("Street", None), (_street_token(rng), "STREET"),
+                          ("Sector", None), (_isb_sector(rng), "BLOCK"),
+                          ("Islamabad", "CITY")])
+        elif style < 0.60:
+            # "House 8, Street 12, F-10/3, Islamabad" (bare sector = colony)
+            pairs = join([(rng.choice(HOUSE_WORDS), None), (h, "HOUSE"),
+                          ("Street", None), (_street_token(rng), "STREET"),
+                          (_isb_sector(rng), "COLONY"), ("Islamabad", "CITY")])
+        elif style < 0.75:
+            # "Plot 22, E-11/4, Islamabad" (no street)
+            pairs = join([("Plot", None), (h, "HOUSE"),
+                          (_isb_sector(rng), "COLONY"), ("Islamabad", "CITY")])
+        elif style < 0.90:
+            # "House 56, Margalla Town, Islamabad"
+            pairs = join([(rng.choice(HOUSE_WORDS), None), (h, "HOUSE"),
+                          (rng.choice(["Margalla Town", "Blue Area", "DHA Phase 2",
+                                       "Bahria Town"]), "COLONY"),
+                          ("Islamabad", "CITY")])
+        else:
+            # messy: "H 123 St 45 G-13/2 Islamabad", "Makan 77 Gali 3 E-11/1 ..."
+            pairs = join([("H", None), (h, "HOUSE"),
+                          ("St", None), (_street_token(rng), "STREET"),
+                          (_isb_sector(rng), "COLONY"), ("Islamabad", "CITY")])
+    elif city == "Rawalpindi":
+        style = rng.random()
+        if style < 0.40:
+            # "House 234, Block C, Satellite Town, Rawalpindi"
+            pairs = join([(rng.choice(HOUSE_WORDS), None), (h, "HOUSE"),
+                          ("Block", None), (_block_token(rng), "BLOCK"),
+                          ("Satellite Town", "COLONY"), ("Rawalpindi", "CITY")])
+        elif style < 0.65:
+            # "House 56, Street 7, Bahria Town, Rawalpindi"
+            pairs = join([(rng.choice(HOUSE_WORDS), None), (h, "HOUSE"),
+                          ("Street", None), (_street_token(rng), "STREET"),
+                          (rng.choice(["Bahria Town", "DHA Phase 1", "Westridge"]), "COLONY"),
+                          ("Rawalpindi", "CITY")])
+        elif style < 0.85:
+            # "Plot 89, Chaklala Scheme III, Rawalpindi"
+            pairs = join([("Plot", None), (h, "HOUSE"),
+                          ("Chaklala Scheme III", "COLONY"), ("Rawalpindi", "CITY")])
+        else:
+            # messy: "H#234 Block C Satellite Town Rawalpindi"
+            pairs = join([("H#" + h, "HOUSE"), ("Block", None),
+                          (_block_token(rng), "BLOCK"),
+                          ("Satellite Town", "COLONY"), ("Rawalpindi", "CITY")])
+    else:  # Faisalabad
+        style = rng.random()
+        if style < 0.40:
+            # "House 78, Block B, Madina Town, Faisalabad"
+            pairs = join([(rng.choice(HOUSE_WORDS), None), (h, "HOUSE"),
+                          ("Block", None), (_block_token(rng), "BLOCK"),
+                          ("Madina Town", "COLONY"), ("Faisalabad", "CITY")])
+        elif style < 0.60:
+            # "Plot 12, Block A, DHA, Faisalabad"
+            pairs = join([("Plot", None), (h, "HOUSE"),
+                          ("Block", None), (_block_token(rng), "BLOCK"),
+                          ("DHA", "COLONY"), ("Faisalabad", "CITY")])
+        elif style < 0.80:
+            # "House 33, Street 5, Model City, Faisalabad"
+            pairs = join([(rng.choice(HOUSE_WORDS), None), (h, "HOUSE"),
+                          ("Street", None), (_street_token(rng), "STREET"),
+                          (rng.choice(["Model City", "Wadi-e-Sitara", "Gulberg City"]), "COLONY"),
+                          ("Faisalabad", "CITY")])
+        else:
+            # messy: "Makan 78 Gali 5 Madina Town Faisalabad"
+            pairs = join([(rng.choice(URDU_HOUSE), None), (h, "HOUSE"),
+                          ("Gali", None), (_street_token(rng), "STREET"),
+                          ("Madina Town", "COLONY"), ("Faisalabad", "CITY")])
+    return _build(pairs)
+
+
+MULTICITY_CITIES = ["Karachi", "Islamabad", "Rawalpindi", "Faisalabad"]
+
+
+def generate_multicity(n: int, seed: int = 123) -> list[dict]:
+    """Generate n city-specific labeled addresses, round-robin across cities."""
+    rng = random.Random(seed)
+    out = []
+    for i in range(n):
+        city = MULTICITY_CITIES[i % len(MULTICITY_CITIES)]
+        tokens, labels = generate_multicity_one(rng, city)
+        out.append({"tokens": tokens, "labels": labels,
+                    "text": " ".join(tokens).replace(" ,", ","),
+                    "city": city})
+    return out
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=8000)
