@@ -39,9 +39,9 @@ class RoofSegDataset(Dataset):
         msk = cv2.imread(p.replace("/images/", "/masks/"), cv2.IMREAD_GRAYSCALE)
         msk = (msk > 127).astype(np.float32)
         if self.augment and np.random.rand() < 0.5:
-            img, msk = img[:, ::-1], msk[:, ::-1]
+            img, msk = img[:, ::-1].copy(), msk[:, ::-1].copy()
         if self.augment and np.random.rand() < 0.5:
-            img, msk = img[::-1], msk[::-1]
+            img, msk = img[::-1].copy(), msk[::-1].copy()
         img = torch.from_numpy(img.transpose(2, 0, 1))
         msk = torch.from_numpy(msk).unsqueeze(0)
         return img, msk
