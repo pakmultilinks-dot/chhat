@@ -21,8 +21,8 @@ import cv2
 import numpy as np
 import requests
 
-REGION_CENTER = (31.48, 74.31)   # DHA-adjacent Lahore
-REGION_KM = 3.0                  # square region side length
+REGION_CENTER = (31.470, 74.325)  # dense DHA Lahore (629 bldgs in quadrant probe)
+REGION_KM = 1.6                  # square region side length (kept small: OSM API is slow)
 Z = 18
 OUT = os.path.join(os.path.dirname(__file__), "..", "data", "roofseg")
 TILE_URL = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
