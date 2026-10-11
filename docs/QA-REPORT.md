@@ -51,3 +51,52 @@ All numbers below are measured, not claimed. Demo-mode figures are labeled.
 - `GOOGLE_MAPS_API_KEY` / `GOOGLE_SOLAR_API_KEY` for live geocoding + real roof
   data. Everything runs in labeled DEMO mode until then.
 - Partner price list + 5–10 install records for quote validation story.
+
+---
+
+## Product-build QA (2026-10-11, post wave-9)
+
+### 1. Unit tests: 15/15 green
+- parser (incl. 57 multi-city tricky cases), numpy-parity, pipeline,
+  golden demos (6/6), NEW roofseg honesty-gate tests (blank/uniform ->
+  UNSURE, absurd-fraction cap).
+
+### 2. Dual-model roof AI (`predict_best`) — verified live on Flask
+- Dense Lahore pin (31.4951, 74.3953, near Milad Chowk): **v3** selected,
+  conf 0.657, overlay rendered.
+- DHA planned pin (31.4700, 74.3250): **v2** selected, conf 0.597.
+- Karachi pin (24.8607, 67.0011): **v2** selected, conf 0.608.
+- `/api/roofseg` returns `model_used` + `model_label`; UI shows
+  "Model used" line in EN + UR.
+
+### 3. Anti-hallucination hardening (bug found and fixed this wave)
+- Found: v3 returned OK (conf 0.59, 82% of frame "roof") on blank/gray
+  images — overconfident on out-of-distribution input.
+- Fixed: `predict()` now returns UNSURE (no mask) when the frame is
+  blank/uniform (std < 2) or building_fraction > 0.75 (absurd for a 150m
+  chip). Verified: blank -> UNSURE, gray -> UNSURE, real E378 chip ->
+  OK/v3/conf 0.655 with mask.
+
+### 4. End-to-end `/api/analyze` on 3 cities (user-pinned, DEMO roof mode)
+- Lahore (31.4951, 74.3953): score 84, 18 panels, 9.9 kW,
+  Rs 1,424,500, payback 2.5 yrs.
+- Karachi (24.8607, 67.0011): score 72, 18 panels, 9.9 kW,
+  Rs 1,424,500, payback 2.6 yrs.
+- Islamabad (33.6844, 73.0479): score 72, 18 panels, 9.9 kW,
+  Rs 1,424,500, payback 2.5 yrs.
+- All carry `"demo": true`; UI shows the red DEMO badge.
+
+### 5. UI checks (live server)
+- `/` and `/?lang=ur` return 200; Urdu strings render (tagline, golden
+  card, model labels).
+- Header step pills now show all 4 steps in the active language.
+- All buttons wired: go, confirm, seeAi, backReport, goldenGo, ovToggle.
+- `/golden-demos.json` serves 200 (offline fallback data present).
+
+### 6. Honest limitations (unchanged, documented in docs/PRODUCT.md)
+- Rooftop masks approximate: v2 IoU 0.3604, v3 dense IoU 0.3846; dense
+  streets not cleanly per-house separated (user verdict: "near but not
+  accurate").
+- Exact house needs the user's map pin; text address alone is not enough.
+- Demo-mode figures are estimates until GOOGLE_SOLAR_API_KEY exists.
+- No deployment performed (user order).
