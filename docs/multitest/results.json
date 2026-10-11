@@ -1,0 +1,65 @@
+{
+ "packages-mall": {
+  "area": "DHA/Walton",
+  "lat": 31.4711049,
+  "lng": 74.3556681,
+  "status": "OK",
+  "model": "v3",
+  "conf": 0.623,
+  "frac": 0.17
+ },
+ "emporium-mall": {
+  "area": "Johar Town",
+  "lat": 31.4668285,
+  "lng": 74.2658473,
+  "status": "OK",
+  "model": "v3",
+  "conf": 0.69,
+  "frac": 0.167
+ },
+ "model-town-park": {
+  "area": "Model Town",
+  "lat": 31.4844876,
+  "lng": 74.3262296,
+  "status": "UNSURE",
+  "model": "v2",
+  "conf": 0.0,
+  "frac": 0.0
+ },
+ "fortress-square": {
+  "area": "Cantt",
+  "lat": 31.5323582,
+  "lng": 74.3631271,
+  "status": "OK",
+  "model": "v3",
+  "conf": 0.777,
+  "frac": 0.405
+ },
+ "badshahi-mosque": {
+  "area": "Old City",
+  "lat": 31.588126,
+  "lng": 74.3093528,
+  "status": "OK",
+  "model": "v3",
+  "conf": 0.754,
+  "frac": 0.358
+ },
+ "liberty-market": {
+  "area": "Gulberg",
+  "lat": 31.5103226,
+  "lng": 74.3447061,
+  "status": "OK",
+  "model": "v3",
+  "conf": 0.551,
+  "frac": 0.041
+ },
+ "shalimar-gardens": {
+  "area": "Shalimar",
+  "lat": 31.5871289,
+  "lng": 74.3821585,
+  "status": "OK",
+  "model": "v3",
+  "conf": 0.765,
+  "frac": 0.306
+ }
+}

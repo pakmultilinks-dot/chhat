@@ -61,6 +61,23 @@ STRINGS = {
         "roofai_hint": "Two rooftop segmenters trained from scratch on Lahore aerial data (v2 generalist + v3 dense-street specialist) read real satellite imagery of your pinned location. The more confident model answers.",
         "model_used_label": "Model used",
         "model_v2": "v2 generalist", "model_v3": "v3 dense-street specialist",
+        "eyebrow": "Pakistan's energy pain",
+        "pain1": "Hours of load-shedding in Lahore's summer",
+        "pain2": "Electricity at Rs 47.69/unit — and rising",
+        "pain3": "Net metering is over: net billing pays only Rs 8–11/unit for your exported power",
+        "hero_answer": "Chhat answers in 60 seconds: type your address, see your roof, get your solar quote.",
+        "live_hint": "Parsing live as you type…",
+        "panel_label": "Panels — drag to re-quote live",
+        "panels_word": "panels",
+        "our_ai_title": "Our AI — the thesis defense",
+        "ai_p1": "Address parser: our own BiLSTM, trained from scratch on 12,500 Pakistani addresses. Entity F1 1.00 (synthetic test), 57 tricky real-world cases.",
+        "ai_p2": "Rooftop segmenters: v2 generalist (test IoU 0.3604) + v3 dense-street specialist (dense IoU 0.3846), trained from scratch on Lahore aerial data. No Big-Tech model inside.",
+        "ai_p3": "Honesty gate: below 55% confidence — or on a blank frame — the model says UNSURE and shows no mask. Never a fake roof.",
+        "ai_p4": "Known limit, published not hidden: dense wall-to-wall streets are not yet cleanly separated per house.",
+        "venture_title": "The venture",
+        "venture_bm": "Free quotes for homeowners → paid qualified leads for solar installers. Commission per closed deal.",
+        "venture_val": "Validation plan: partner installer price lists + 5–10 real installation records, to publish measured quote error.",
+        "local_global": "Built for Pakistani addresses and rooftops first — generalizing to dense cities anywhere.",
         "see_ai": "See what our AI sees →",
         "overlay_label": "Show predicted roofs",
         "conf_label": "Model confidence",
@@ -98,6 +115,23 @@ STRINGS = {
         "roofai_hint": "لاہور کی فضائی تصاویر پر تربیت یافتہ دو ماڈل (v2 جنرلسٹ + v3 گنجان آبادی کے ماہر) آپ کے مقام کی اصل سیٹلائٹ تصویر پڑھتے ہیں۔ زیادہ پراعتماد ماڈل جواب دیتا ہے۔",
         "model_used_label": "استعمال شدہ ماڈل",
         "model_v2": "v2 جنرلسٹ", "model_v3": "v3 گنجان آبادی کا ماہر",
+        "eyebrow": "پاکستان کا توانائی کا درد",
+        "pain1": "لاہور کی گرمی میں گھنٹوں لوڈشیڈنگ",
+        "pain2": "بجلی 47.69 روپے فی یونٹ — اور بڑھ رہی ہے",
+        "pain3": "نیٹ میٹرنگ ختم: نیٹ بلنگ میں آپ کی برآمدی بجلی صرف 8 تا 11 روپے فی یونٹ",
+        "hero_answer": "چھت 60 سیکنڈ میں جواب دیتی ہے: پتہ لکھیں، اپنی چھت دیکھیں، سولر قیمت پائیں۔",
+        "live_hint": "آپ کے لکھتے ہی پتہ پڑھا جا رہا ہے…",
+        "panel_label": "پینل — قیمت بدلنے کے لیے گھمائیں",
+        "panels_word": "پینل",
+        "our_ai_title": "ہماری AI — دفاعی حقائق",
+        "ai_p1": "پتہ پارسر: ہمارا اپنا BiLSTM، 12,500 پاکستانی پتوں پر از خود تربیت یافتہ۔ F1 اسکور 1.00 (مصنوعی ٹیسٹ)، 57 مشکل حقیقی کیسز۔",
+        "ai_p2": "چھت کے ماڈل: v2 جنرلسٹ (ٹیسٹ IoU 0.3604) + v3 گنجان آبادی کا ماہر (IoU 0.3846)، لاہور کی فضائی تصاویر پر از خود تربیت یافتہ۔ اندر کوئی بڑی ٹیک کمپنی کا ماڈل نہیں۔",
+        "ai_p3": "دیانت کا اصول: 55 فیصد سے کم اعتماد پر — یا خالی تصویر پر — ماڈل UNSURE کہتا ہے اور کوئی ماسک نہیں دکھاتا۔ کبھی جعلی چھت نہیں۔",
+        "ai_p4": "معلوم حد، چھپائی نہیں شائع کی: گنجان گلیوں میں ہر گھر ابھی صاف الگ نہیں ہوتا۔",
+        "venture_title": "کاروبار",
+        "venture_bm": "گھر مالکان کے لیے مفت قیمتیں ← سولر انسٹالرز کے لیے معیاری لیڈز۔ ہر بند ڈیل پر کمیشن۔",
+        "venture_val": "تصدیقی منصوبہ: پارٹنر انسٹالر کی قیمتوں کی فہرستیں + 5 تا 10 حقیقی تنصیبات کا ریکارڈ، تاکہ ناپی گئی غلطی شائع کی جا سکے۔",
+        "local_global": "پہلے پاکستانی پتوں اور چھتوں کے لیے بنائی گئی — دنیا کے گنجان شہروں تک پھیلنے کے لیے۔",
         "see_ai": "دیکھیں ہمارا AI کیا دیکھتا ہے ←",
         "overlay_label": "متوقع چھتیں دکھائیں",
         "conf_label": "ماڈل کا اعتماد",
@@ -116,6 +150,7 @@ def index():
     import json as _json
     return render_template("index.html", s=s, lang=lang,
                            ui_json=_json.dumps(s, ensure_ascii=False),
+                           ui_all=_json.dumps(STRINGS, ensure_ascii=False),
                            golden_json=_golden_json_text())
 
 
@@ -189,6 +224,28 @@ def _b64_png(bgr_img) -> str:
     if not ok:
         raise RuntimeError("png encode failed")
     return "data:image/png;base64," + base64.b64encode(buf.tobytes()).decode()
+
+
+@app.post("/api/requote")
+def api_requote():
+    """Recompute the PKR quote for a user-adjusted panel count.
+
+    Body: {panels: int, annual_kwh_per_kw: float}. Each panel is 550W.
+    Returns the quote dict; the UI updates the numbers live.
+    """
+    body = request.json or {}
+    try:
+        panels = max(1, min(int(body.get("panels", 1)), 60))
+    except (TypeError, ValueError):
+        return jsonify({"error": "bad panels"}), 400
+    try:
+        kwh_per_kw = float(body.get("annual_kwh_per_kw") or 1550)
+    except (TypeError, ValueError):
+        kwh_per_kw = 1550
+    layout = {"panel_count": panels, "system_kw": round(panels * 0.55, 2)}
+    q = quote(layout, annual_kwh_per_kw=kwh_per_kw)
+    return jsonify({"quote": q, "panels": panels,
+                    "system_kw": layout["system_kw"]})
 
 
 @app.post("/api/roofseg")
