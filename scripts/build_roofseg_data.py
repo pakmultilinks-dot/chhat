@@ -31,7 +31,7 @@ import requests
 
 REGIONS = [
     ("dha", 31.470, 74.325),
-    ("modeltown", 31.485, 74.320),
+    ("dha5", 31.462, 74.395),   # DHA Phase 5 — 1048 OSM buildings in probe
     ("johartown", 31.470, 74.273),
 ]
 REGION_KM = 1.6                  # square region side length (kept small: OSM API is slow)
