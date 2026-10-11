@@ -71,19 +71,27 @@ def predict(image, threshold=CONF_THRESHOLD, model_id="v2"):
     Returns dict with mask, confidence, status, building_fraction,
     plus "model" (which weights were used).
     """
+    # Sanity: a blank/uniform frame is not real imagery (failed fetch) —
+    # never hallucinate roofs on it.
+    if image is None or image.size == 0 or float(image.std()) < 2.0:
+        return {"mask": None, "confidence": 0.0, "status": "UNSURE",
+                "building_fraction": 0.0, "model": model_id}
     model = load_model(MODEL_PATHS[model_id], model_id)
     if model is None:
         return {"mask": None, "confidence": 0.0, "status": "NO_MODEL",
                 "building_fraction": 0.0, "model": model_id}
     prob_full, bin_mask = _run(model, image)
     fg = bin_mask == 1
+    frac = float(fg.mean())
     confidence = float(prob_full[fg].mean()) if fg.any() else 0.0
-    if confidence < threshold or not fg.any():
+    # Absurdity cap: no real 150m rooftop chip is >75% roof. Past that the
+    # model is hallucinating on out-of-distribution input — refuse to guess.
+    if confidence < threshold or not fg.any() or frac > 0.75:
         return {"mask": None, "confidence": confidence,
-                "status": "UNSURE", "building_fraction": float(fg.mean()),
+                "status": "UNSURE", "building_fraction": frac,
                 "model": model_id}
     return {"mask": (bin_mask * 255).astype(np.uint8), "confidence": confidence,
-            "status": "OK", "building_fraction": float(fg.mean()),
+            "status": "OK", "building_fraction": frac,
             "model": model_id}
 
 
