@@ -103,7 +103,28 @@ def index():
     s = STRINGS.get(lang, STRINGS["en"])
     import json as _json
     return render_template("index.html", s=s, lang=lang,
-                           ui_json=_json.dumps(s, ensure_ascii=False))
+                           ui_json=_json.dumps(s, ensure_ascii=False),
+                           golden_json=_golden_json_text())
+
+
+_GOLDEN_PATH = os.path.join(os.path.dirname(__file__), "..", "..",
+                            "docs", "pitch", "golden-demos.json")
+
+
+def _golden_json_text() -> str:
+    """Embedded golden demos so the offline fallback works with zero backend."""
+    try:
+        with open(_GOLDEN_PATH, encoding="utf-8") as f:
+            return f.read()
+    except OSError:
+        return '{"count": 0, "demos": []}'
+
+
+@app.get("/golden-demos.json")
+def golden_demos():
+    """Serve the precomputed golden demo set (offline fallback data)."""
+    from flask import Response
+    return Response(_golden_json_text(), mimetype="application/json")
 
 
 @app.post("/api/parse")

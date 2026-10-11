@@ -1,0 +1,2712 @@
+{
+ "generated_at": "2026-10-11T06:59:08.038168Z",
+ "note": "Precomputed with the real Chhat pipeline in demo mode. Pins are approximate landmark locations (demo pins). All figures are estimates, not surveyed data.",
+ "count": 10,
+ "demos": [
+  {
+   "label": "Packages Mall — Lahore",
+   "address": "Packages Mall, Shahrah-e-Roomi, DHA Phase 5, Lahore",
+   "lat": 31.4697,
+   "lng": 74.3941,
+   "result": {
+    "parsed": {
+     "text": "Packages Mall, Shahrah-e-Roomi, DHA Phase 5, Lahore",
+     "tokens": [
+      "Packages",
+      "Mall",
+      ",",
+      "Shahrah-e-Roomi",
+      ",",
+      "DHA",
+      "Phase",
+      "5",
+      ",",
+      "Lahore"
+     ],
+     "labels": [
+      "O",
+      "B-HOUSE",
+      "O",
+      "B-STREET",
+      "O",
+      "B-COLONY",
+      "I-COLONY",
+      "I-COLONY",
+      "O",
+      "B-CITY"
+     ],
+     "house": "Mall",
+     "street": "Shahrah-e-Roomi",
+     "block": "",
+     "colony": "DHA Phase 5",
+     "city": "Lahore"
+    },
+    "geo": {
+     "lat": 31.4697,
+     "lng": 74.3941,
+     "formatted_address": "Packages Mall, Shahrah-e-Roomi, DHA Phase 5, Lahore",
+     "confidence": "GOLDEN_DEMO",
+     "place_id": null
+    },
+    "roof": {
+     "demo": true,
+     "lat": 31.4697,
+     "lng": 74.3941,
+     "roof_area_m2": 128.2,
+     "usable_area_m2": 118.8,
+     "segments": [
+      {
+       "pitch_degrees": 2.980984262125734,
+       "azimuth_degrees": 180,
+       "area_m2": 60.9,
+       "shade_fraction": 0.1490479335237516
+      },
+      {
+       "pitch_degrees": 0.6600749943305404,
+       "azimuth_degrees": 180,
+       "area_m2": 66.0,
+       "shade_fraction": 0.15634873908321845
+      }
+     ],
+     "obstructions": [
+      {
+       "type": "water_tank",
+       "area_m2": 2.4
+      },
+      {
+       "type": "mumty",
+       "area_m2": 7.0
+      }
+     ],
+     "annual_kwh_per_kw": 1574.0,
+     "note": "DEMO roof: synthetic but realistic Lahore rooftop. Set GOOGLE_SOLAR_API_KEY for live Google Solar data."
+    },
+    "layout": {
+     "panel_count": 18,
+     "system_kw": 9.9,
+     "usable_area_m2": 117.5,
+     "obstruction_area_m2": 9.4,
+     "panels": [
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 4.35,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 4.35,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 4.35,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 1,
+       "x": 0.15,
+       "y": 6.36,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 1,
+       "x": 2.2,
+       "y": 6.36,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 1,
+       "x": 4.25,
+       "y": 6.36,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      }
+     ],
+     "segments": [
+      {
+       "x": 0,
+       "y": 0,
+       "w": 8.29,
+       "h": 6.21,
+       "azimuth": 180
+      },
+      {
+       "x": 0,
+       "y": 6.21,
+       "w": 9.38,
+       "h": 7.04,
+       "azimuth": 180
+      }
+     ],
+     "panel_wp": 550
+    },
+    "quote": {
+     "system_kw": 9.9,
+     "panel_count": 18,
+     "annual_generation_kwh": 15583.0,
+     "self_consumed_kwh": 10908.0,
+     "exported_kwh": 4675.0,
+     "equipment_cost_pkr": 1424500.0,
+     "annual_savings_pkr": 564604.0,
+     "payback_years": 2.5,
+     "lifetime_savings_25y_pkr": 35544245.0,
+     "tariff_used": 47.69,
+     "export_rate_used": 9.5
+    },
+    "score": {
+     "score": 88.0,
+     "breakdown": {
+      "usable_area": 98.0,
+      "shade": 62.0,
+      "system_fit": 100.0,
+      "payback": 92.0
+     }
+    },
+    "demo": true
+   }
+  },
+  {
+   "label": "Emporium Mall — Lahore",
+   "address": "Emporium Mall, Abdul Haque Road, Johar Town, Lahore",
+   "lat": 31.4695,
+   "lng": 74.2728,
+   "result": {
+    "parsed": {
+     "text": "Emporium Mall, Abdul Haque Road, Johar Town, Lahore",
+     "tokens": [
+      "Emporium",
+      "Mall",
+      ",",
+      "Abdul",
+      "Haque",
+      "Road",
+      ",",
+      "Johar",
+      "Town",
+      ",",
+      "Lahore"
+     ],
+     "labels": [
+      "O",
+      "B-HOUSE",
+      "O",
+      "O",
+      "O",
+      "B-STREET",
+      "O",
+      "B-COLONY",
+      "I-COLONY",
+      "O",
+      "B-CITY"
+     ],
+     "house": "Mall",
+     "street": "Road",
+     "block": "",
+     "colony": "Johar Town",
+     "city": "Lahore"
+    },
+    "geo": {
+     "lat": 31.4695,
+     "lng": 74.2728,
+     "formatted_address": "Emporium Mall, Abdul Haque Road, Johar Town, Lahore",
+     "confidence": "GOLDEN_DEMO",
+     "place_id": null
+    },
+    "roof": {
+     "demo": true,
+     "lat": 31.4695,
+     "lng": 74.2728,
+     "roof_area_m2": 152.6,
+     "usable_area_m2": 136.4,
+     "segments": [
+      {
+       "pitch_degrees": 2.387999255080614,
+       "azimuth_degrees": 90,
+       "area_m2": 55.0,
+       "shade_fraction": 0.1592213171426442
+      },
+      {
+       "pitch_degrees": 6.461369768633697,
+       "azimuth_degrees": 180,
+       "area_m2": 42.2,
+       "shade_fraction": 0.14963081408317674
+      },
+      {
+       "pitch_degrees": 5.288168192174137,
+       "azimuth_degrees": 270,
+       "area_m2": 59.2,
+       "shade_fraction": 0.21463627534946428
+      }
+     ],
+     "obstructions": [
+      {
+       "type": "water_tank",
+       "area_m2": 3.8
+      },
+      {
+       "type": "mumty",
+       "area_m2": 6.5
+      },
+      {
+       "type": "parapet",
+       "area_m2": 5.9
+      }
+     ],
+     "annual_kwh_per_kw": 1573.0,
+     "note": "DEMO roof: synthetic but realistic Lahore rooftop. Set GOOGLE_SOLAR_API_KEY for live Google Solar data."
+    },
+    "layout": {
+     "panel_count": 18,
+     "system_kw": 9.9,
+     "usable_area_m2": 81.0,
+     "obstruction_area_m2": 16.2,
+     "panels": [
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 1,
+       "x": 0.15,
+       "y": 5.54,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 1,
+       "x": 2.2,
+       "y": 5.54,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 1,
+       "x": 4.25,
+       "y": 5.54,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 1,
+       "x": 0.15,
+       "y": 6.59,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 1,
+       "x": 2.2,
+       "y": 6.59,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 1,
+       "x": 4.25,
+       "y": 6.59,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      }
+     ],
+     "segments": [
+      {
+       "x": 0,
+       "y": 0,
+       "w": 7.19,
+       "h": 5.39,
+       "azimuth": 90
+      },
+      {
+       "x": 0,
+       "y": 5.39,
+       "w": 7.5,
+       "h": 5.63,
+       "azimuth": 180
+      }
+     ],
+     "panel_wp": 550
+    },
+    "quote": {
+     "system_kw": 9.9,
+     "panel_count": 18,
+     "annual_generation_kwh": 15573.0,
+     "self_consumed_kwh": 10901.0,
+     "exported_kwh": 4672.0,
+     "equipment_cost_pkr": 1424500.0,
+     "annual_savings_pkr": 564246.0,
+     "payback_years": 2.5,
+     "lifetime_savings_25y_pkr": 35521663.0,
+     "tariff_used": 47.69,
+     "export_rate_used": 9.5
+    },
+    "score": {
+     "score": 78.0,
+     "breakdown": {
+      "usable_area": 68.0,
+      "shade": 56.0,
+      "system_fit": 100.0,
+      "payback": 92.0
+     }
+    },
+    "demo": true
+   }
+  },
+  {
+   "label": "Lucky One Mall — Karachi",
+   "address": "Lucky One Mall, Rashid Minhas Road, Karachi",
+   "lat": 24.8876,
+   "lng": 67.0894,
+   "result": {
+    "parsed": {
+     "text": "Lucky One Mall, Rashid Minhas Road, Karachi",
+     "tokens": [
+      "Lucky",
+      "One",
+      "Mall",
+      ",",
+      "Rashid",
+      "Minhas",
+      "Road",
+      ",",
+      "Karachi"
+     ],
+     "labels": [
+      "B-HOUSE",
+      "O",
+      "B-STREET",
+      "O",
+      "B-COLONY",
+      "B-COLONY",
+      "I-COLONY",
+      "O",
+      "B-CITY"
+     ],
+     "house": "Lucky",
+     "street": "Mall",
+     "block": "",
+     "colony": "Rashid Minhas Road",
+     "city": "Karachi"
+    },
+    "geo": {
+     "lat": 24.8876,
+     "lng": 67.0894,
+     "formatted_address": "Lucky One Mall, Rashid Minhas Road, Karachi",
+     "confidence": "GOLDEN_DEMO",
+     "place_id": null
+    },
+    "roof": {
+     "demo": true,
+     "lat": 24.8876,
+     "lng": 67.0894,
+     "roof_area_m2": 169.2,
+     "usable_area_m2": 156.7,
+     "segments": [
+      {
+       "pitch_degrees": 4.715476062633076,
+       "azimuth_degrees": 270,
+       "area_m2": 45.8,
+       "shade_fraction": 0.22421398439502122
+      },
+      {
+       "pitch_degrees": 6.847869120044892,
+       "azimuth_degrees": 90,
+       "area_m2": 51.3,
+       "shade_fraction": 0.17891960594678996
+      },
+      {
+       "pitch_degrees": 0.37999654289886386,
+       "azimuth_degrees": 90,
+       "area_m2": 70.2,
+       "shade_fraction": 0.13698907551699407
+      }
+     ],
+     "obstructions": [
+      {
+       "type": "water_tank",
+       "area_m2": 2.2
+      },
+      {
+       "type": "mumty",
+       "area_m2": 6.0
+      },
+      {
+       "type": "parapet",
+       "area_m2": 4.3
+      }
+     ],
+     "annual_kwh_per_kw": 1493.0,
+     "note": "DEMO roof: synthetic but realistic Lahore rooftop. Set GOOGLE_SOLAR_API_KEY for live Google Solar data."
+    },
+    "layout": {
+     "panel_count": 18,
+     "system_kw": 9.9,
+     "usable_area_m2": 84.6,
+     "obstruction_area_m2": 12.5,
+     "panels": [
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 1,
+       "x": 0.15,
+       "y": 5.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 1,
+       "x": 2.2,
+       "y": 5.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 1,
+       "x": 4.25,
+       "y": 5.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 1,
+       "x": 0.15,
+       "y": 6.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 1,
+       "x": 2.2,
+       "y": 6.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 1,
+       "x": 4.25,
+       "y": 6.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      }
+     ],
+     "segments": [
+      {
+       "x": 0,
+       "y": 0,
+       "w": 6.66,
+       "h": 5.0,
+       "azimuth": 270
+      },
+      {
+       "x": 0,
+       "y": 5.0,
+       "w": 8.27,
+       "h": 6.2,
+       "azimuth": 90
+      }
+     ],
+     "panel_wp": 550
+    },
+    "quote": {
+     "system_kw": 9.9,
+     "panel_count": 18,
+     "annual_generation_kwh": 14781.0,
+     "self_consumed_kwh": 10346.0,
+     "exported_kwh": 4434.0,
+     "equipment_cost_pkr": 1424500.0,
+     "annual_savings_pkr": 535549.0,
+     "payback_years": 2.7,
+     "lifetime_savings_25y_pkr": 33715094.0,
+     "tariff_used": 47.69,
+     "export_rate_used": 9.5
+    },
+    "score": {
+     "score": 78.0,
+     "breakdown": {
+      "usable_area": 70.0,
+      "shade": 55.0,
+      "system_fit": 100.0,
+      "payback": 88.0
+     }
+    },
+    "demo": true
+   }
+  },
+  {
+   "label": "Pearl Continental Hotel — Karachi",
+   "address": "Pearl Continental Hotel, Club Road, Karachi",
+   "lat": 24.8516,
+   "lng": 67.0283,
+   "result": {
+    "parsed": {
+     "text": "Pearl Continental Hotel, Club Road, Karachi",
+     "tokens": [
+      "Pearl",
+      "Continental",
+      "Hotel",
+      ",",
+      "Club",
+      "Road",
+      ",",
+      "Karachi"
+     ],
+     "labels": [
+      "B-HOUSE",
+      "O",
+      "B-STREET",
+      "O",
+      "B-COLONY",
+      "I-COLONY",
+      "O",
+      "B-CITY"
+     ],
+     "house": "Pearl",
+     "street": "Hotel",
+     "block": "",
+     "colony": "Club Road",
+     "city": "Karachi"
+    },
+    "geo": {
+     "lat": 24.8516,
+     "lng": 67.0283,
+     "formatted_address": "Pearl Continental Hotel, Club Road, Karachi",
+     "confidence": "GOLDEN_DEMO",
+     "place_id": null
+    },
+    "roof": {
+     "demo": true,
+     "lat": 24.8516,
+     "lng": 67.0283,
+     "roof_area_m2": 135.1,
+     "usable_area_m2": 128.3,
+     "segments": [
+      {
+       "pitch_degrees": 1.5622249667337424,
+       "azimuth_degrees": 90,
+       "area_m2": 56.0,
+       "shade_fraction": 0.053211606342490184
+      },
+      {
+       "pitch_degrees": 3.3299278579904374,
+       "azimuth_degrees": 180,
+       "area_m2": 76.4,
+       "shade_fraction": 0.10479016226555815
+      }
+     ],
+     "obstructions": [
+      {
+       "type": "water_tank",
+       "area_m2": 2.4
+      },
+      {
+       "type": "mumty",
+       "area_m2": 4.4
+      }
+     ],
+     "annual_kwh_per_kw": 1553.0,
+     "note": "DEMO roof: synthetic but realistic Lahore rooftop. Set GOOGLE_SOLAR_API_KEY for live Google Solar data."
+    },
+    "layout": {
+     "panel_count": 18,
+     "system_kw": 9.9,
+     "usable_area_m2": 125.6,
+     "obstruction_area_m2": 6.8,
+     "panels": [
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 4.35,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 4.35,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 4.35,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 1,
+       "x": 0.15,
+       "y": 6.22,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 1,
+       "x": 2.2,
+       "y": 6.22,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 1,
+       "x": 4.25,
+       "y": 6.22,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      }
+     ],
+     "segments": [
+      {
+       "x": 0,
+       "y": 0,
+       "w": 8.1,
+       "h": 6.07,
+       "azimuth": 90
+      },
+      {
+       "x": 0,
+       "y": 6.07,
+       "w": 10.09,
+       "h": 7.57,
+       "azimuth": 180
+      }
+     ],
+     "panel_wp": 550
+    },
+    "quote": {
+     "system_kw": 9.9,
+     "panel_count": 18,
+     "annual_generation_kwh": 15375.0,
+     "self_consumed_kwh": 10762.0,
+     "exported_kwh": 4612.0,
+     "equipment_cost_pkr": 1424500.0,
+     "annual_savings_pkr": 557072.0,
+     "payback_years": 2.6,
+     "lifetime_savings_25y_pkr": 35070020.0,
+     "tariff_used": 47.69,
+     "export_rate_used": 9.5
+    },
+    "score": {
+     "score": 93.0,
+     "breakdown": {
+      "usable_area": 100.0,
+      "shade": 80.0,
+      "system_fit": 100.0,
+      "payback": 90.0
+     }
+    },
+    "demo": true
+   }
+  },
+  {
+   "label": "Dolmen Mall Clifton — Karachi",
+   "address": "Dolmen Mall Clifton, Sea View Road, Karachi",
+   "lat": 24.8025,
+   "lng": 67.0297,
+   "result": {
+    "parsed": {
+     "text": "Dolmen Mall Clifton, Sea View Road, Karachi",
+     "tokens": [
+      "Dolmen",
+      "Mall",
+      "Clifton",
+      ",",
+      "Sea",
+      "View",
+      "Road",
+      ",",
+      "Karachi"
+     ],
+     "labels": [
+      "B-HOUSE",
+      "O",
+      "B-STREET",
+      "O",
+      "B-COLONY",
+      "B-COLONY",
+      "I-COLONY",
+      "O",
+      "B-CITY"
+     ],
+     "house": "Dolmen",
+     "street": "Clifton",
+     "block": "",
+     "colony": "Sea View Road",
+     "city": "Karachi"
+    },
+    "geo": {
+     "lat": 24.8025,
+     "lng": 67.0297,
+     "formatted_address": "Dolmen Mall Clifton, Sea View Road, Karachi",
+     "confidence": "GOLDEN_DEMO",
+     "place_id": null
+    },
+    "roof": {
+     "demo": true,
+     "lat": 24.8025,
+     "lng": 67.0297,
+     "roof_area_m2": 146.2,
+     "usable_area_m2": 137.6,
+     "segments": [
+      {
+       "pitch_degrees": 4.184148990540399,
+       "azimuth_degrees": 90,
+       "area_m2": 46.4,
+       "shade_fraction": 0.14891740664324682
+      },
+      {
+       "pitch_degrees": 3.606062847574181,
+       "azimuth_degrees": 270,
+       "area_m2": 52.4,
+       "shade_fraction": 0.09235704469045024
+      },
+      {
+       "pitch_degrees": 4.625134586753126,
+       "azimuth_degrees": 270,
+       "area_m2": 55.6,
+       "shade_fraction": 0.06897938708148517
+      }
+     ],
+     "obstructions": [
+      {
+       "type": "water_tank",
+       "area_m2": 4.0
+      },
+      {
+       "type": "mumty",
+       "area_m2": 4.6
+      }
+     ],
+     "annual_kwh_per_kw": 1480.0,
+     "note": "DEMO roof: synthetic but realistic Lahore rooftop. Set GOOGLE_SOLAR_API_KEY for live Google Solar data."
+    },
+    "layout": {
+     "panel_count": 18,
+     "system_kw": 9.9,
+     "usable_area_m2": 90.2,
+     "obstruction_area_m2": 8.6,
+     "panels": [
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 1,
+       "x": 0.15,
+       "y": 5.47,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 1,
+       "x": 2.2,
+       "y": 5.47,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 1,
+       "x": 4.25,
+       "y": 5.47,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 1,
+       "x": 0.15,
+       "y": 6.52,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 1,
+       "x": 2.2,
+       "y": 6.52,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 1,
+       "x": 4.25,
+       "y": 6.52,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      }
+     ],
+     "segments": [
+      {
+       "x": 0,
+       "y": 0,
+       "w": 7.1,
+       "h": 5.32,
+       "azimuth": 90
+      },
+      {
+       "x": 0,
+       "y": 5.32,
+       "w": 8.36,
+       "h": 6.27,
+       "azimuth": 270
+      }
+     ],
+     "panel_wp": 550
+    },
+    "quote": {
+     "system_kw": 9.9,
+     "panel_count": 18,
+     "annual_generation_kwh": 14652.0,
+     "self_consumed_kwh": 10256.0,
+     "exported_kwh": 4396.0,
+     "equipment_cost_pkr": 1424500.0,
+     "annual_savings_pkr": 530886.0,
+     "payback_years": 2.7,
+     "lifetime_savings_25y_pkr": 33421526.0,
+     "tariff_used": 47.69,
+     "export_rate_used": 9.5
+    },
+    "score": {
+     "score": 84.0,
+     "breakdown": {
+      "usable_area": 75.0,
+      "shade": 74.0,
+      "system_fit": 100.0,
+      "payback": 88.0
+     }
+    },
+    "demo": true
+   }
+  },
+  {
+   "label": "Centaurus Mall — Islamabad",
+   "address": "Centaurus Mall, Jinnah Avenue, Islamabad",
+   "lat": 33.7077,
+   "lng": 73.0498,
+   "result": {
+    "parsed": {
+     "text": "Centaurus Mall, Jinnah Avenue, Islamabad",
+     "tokens": [
+      "Centaurus",
+      "Mall",
+      ",",
+      "Jinnah",
+      "Avenue",
+      ",",
+      "Islamabad"
+     ],
+     "labels": [
+      "O",
+      "B-HOUSE",
+      "O",
+      "B-COLONY",
+      "B-COLONY",
+      "O",
+      "B-CITY"
+     ],
+     "house": "Mall",
+     "street": "",
+     "block": "",
+     "colony": "Jinnah Avenue",
+     "city": "Islamabad"
+    },
+    "geo": {
+     "lat": 33.7077,
+     "lng": 73.0498,
+     "formatted_address": "Centaurus Mall, Jinnah Avenue, Islamabad",
+     "confidence": "GOLDEN_DEMO",
+     "place_id": null
+    },
+    "roof": {
+     "demo": true,
+     "lat": 33.7077,
+     "lng": 73.0498,
+     "roof_area_m2": 161.7,
+     "usable_area_m2": 149.9,
+     "segments": [
+      {
+       "pitch_degrees": 3.6974432142178344,
+       "azimuth_degrees": 90,
+       "area_m2": 93.8,
+       "shade_fraction": 0.15900447439125875
+      },
+      {
+       "pitch_degrees": 1.0474345746205236,
+       "azimuth_degrees": 180,
+       "area_m2": 68.1,
+       "shade_fraction": 0.0736109325368421
+      }
+     ],
+     "obstructions": [
+      {
+       "type": "water_tank",
+       "area_m2": 2.1
+      },
+      {
+       "type": "mumty",
+       "area_m2": 4.1
+      },
+      {
+       "type": "parapet",
+       "area_m2": 5.6
+      }
+     ],
+     "annual_kwh_per_kw": 1566.0,
+     "note": "DEMO roof: synthetic but realistic Lahore rooftop. Set GOOGLE_SOLAR_API_KEY for live Google Solar data."
+    },
+    "layout": {
+     "panel_count": 18,
+     "system_kw": 9.9,
+     "usable_area_m2": 82.0,
+     "obstruction_area_m2": 11.8,
+     "panels": [
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 6.3,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 6.3,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 6.3,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 6.3,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 4.35,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 4.35,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      }
+     ],
+     "segments": [
+      {
+       "x": 0,
+       "y": 0,
+       "w": 10.46,
+       "h": 7.84,
+       "azimuth": 90
+      }
+     ],
+     "panel_wp": 550
+    },
+    "quote": {
+     "system_kw": 9.9,
+     "panel_count": 18,
+     "annual_generation_kwh": 15503.0,
+     "self_consumed_kwh": 10852.0,
+     "exported_kwh": 4651.0,
+     "equipment_cost_pkr": 1424500.0,
+     "annual_savings_pkr": 561735.0,
+     "payback_years": 2.5,
+     "lifetime_savings_25y_pkr": 35363588.0,
+     "tariff_used": 47.69,
+     "export_rate_used": 9.5
+    },
+    "score": {
+     "score": 82.0,
+     "breakdown": {
+      "usable_area": 68.0,
+      "shade": 71.0,
+      "system_fit": 100.0,
+      "payback": 92.0
+     }
+    },
+    "demo": true
+   }
+  },
+  {
+   "label": "Safa Gold Mall — Islamabad",
+   "address": "Safa Gold Mall, F-7 Markaz, Islamabad",
+   "lat": 33.6995,
+   "lng": 73.0363,
+   "result": {
+    "parsed": {
+     "text": "Safa Gold Mall, F-7 Markaz, Islamabad",
+     "tokens": [
+      "Safa",
+      "Gold",
+      "Mall",
+      ",",
+      "F-7",
+      "Markaz",
+      ",",
+      "Islamabad"
+     ],
+     "labels": [
+      "B-HOUSE",
+      "O",
+      "B-STREET",
+      "O",
+      "B-COLONY",
+      "B-COLONY",
+      "O",
+      "B-CITY"
+     ],
+     "house": "Safa",
+     "street": "Mall",
+     "block": "",
+     "colony": "F-7 Markaz",
+     "city": "Islamabad"
+    },
+    "geo": {
+     "lat": 33.6995,
+     "lng": 73.0363,
+     "formatted_address": "Safa Gold Mall, F-7 Markaz, Islamabad",
+     "confidence": "GOLDEN_DEMO",
+     "place_id": null
+    },
+    "roof": {
+     "demo": true,
+     "lat": 33.6995,
+     "lng": 73.0363,
+     "roof_area_m2": 170.3,
+     "usable_area_m2": 161.2,
+     "segments": [
+      {
+       "pitch_degrees": 6.9964076810928875,
+       "azimuth_degrees": 270,
+       "area_m2": 62.6,
+       "shade_fraction": 0.06925983452880786
+      },
+      {
+       "pitch_degrees": 3.2736349566671112,
+       "azimuth_degrees": 270,
+       "area_m2": 63.1,
+       "shade_fraction": 0.17152727718055089
+      },
+      {
+       "pitch_degrees": 1.8711830177609228,
+       "azimuth_degrees": 270,
+       "area_m2": 49.6,
+       "shade_fraction": 0.06752434001583388
+      }
+     ],
+     "obstructions": [
+      {
+       "type": "water_tank",
+       "area_m2": 2.1
+      },
+      {
+       "type": "mumty",
+       "area_m2": 7.0
+      }
+     ],
+     "annual_kwh_per_kw": 1578.0,
+     "note": "DEMO roof: synthetic but realistic Lahore rooftop. Set GOOGLE_SOLAR_API_KEY for live Google Solar data."
+    },
+    "layout": {
+     "panel_count": 18,
+     "system_kw": 9.9,
+     "usable_area_m2": 116.6,
+     "obstruction_area_m2": 9.1,
+     "panels": [
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 4.35,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 4.35,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 4.35,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 1,
+       "x": 0.15,
+       "y": 6.48,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 1,
+       "x": 2.2,
+       "y": 6.48,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      },
+      {
+       "segment": 1,
+       "x": 4.25,
+       "y": 6.48,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 270
+      }
+     ],
+     "segments": [
+      {
+       "x": 0,
+       "y": 0,
+       "w": 8.45,
+       "h": 6.33,
+       "azimuth": 270
+      },
+      {
+       "x": 0,
+       "y": 6.33,
+       "w": 9.17,
+       "h": 6.88,
+       "azimuth": 270
+      }
+     ],
+     "panel_wp": 550
+    },
+    "quote": {
+     "system_kw": 9.9,
+     "panel_count": 18,
+     "annual_generation_kwh": 15622.0,
+     "self_consumed_kwh": 10936.0,
+     "exported_kwh": 4687.0,
+     "equipment_cost_pkr": 1424500.0,
+     "annual_savings_pkr": 566039.0,
+     "payback_years": 2.5,
+     "lifetime_savings_25y_pkr": 35634573.0,
+     "tariff_used": 47.69,
+     "export_rate_used": 9.5
+    },
+    "score": {
+     "score": 91.0,
+     "breakdown": {
+      "usable_area": 97.0,
+      "shade": 74.0,
+      "system_fit": 100.0,
+      "payback": 92.0
+     }
+    },
+    "demo": true
+   }
+  },
+  {
+   "label": "Serena Hotel — Islamabad",
+   "address": "Serena Hotel, Khayaban-e-Suharwardy, Islamabad",
+   "lat": 33.7164,
+   "lng": 73.0746,
+   "result": {
+    "parsed": {
+     "text": "Serena Hotel, Khayaban-e-Suharwardy, Islamabad",
+     "tokens": [
+      "Serena",
+      "Hotel",
+      ",",
+      "Khayaban-e-Suharwardy",
+      ",",
+      "Islamabad"
+     ],
+     "labels": [
+      "O",
+      "B-HOUSE",
+      "O",
+      "B-COLONY",
+      "O",
+      "B-CITY"
+     ],
+     "house": "Hotel",
+     "street": "",
+     "block": "",
+     "colony": "Khayaban-e-Suharwardy",
+     "city": "Islamabad"
+    },
+    "geo": {
+     "lat": 33.7164,
+     "lng": 73.0746,
+     "formatted_address": "Serena Hotel, Khayaban-e-Suharwardy, Islamabad",
+     "confidence": "GOLDEN_DEMO",
+     "place_id": null
+    },
+    "roof": {
+     "demo": true,
+     "lat": 33.7164,
+     "lng": 73.0746,
+     "roof_area_m2": 140.0,
+     "usable_area_m2": 125.5,
+     "segments": [
+      {
+       "pitch_degrees": 2.268270077353705,
+       "azimuth_degrees": 90,
+       "area_m2": 41.8,
+       "shade_fraction": 0.14321469038572035
+      },
+      {
+       "pitch_degrees": 2.0664631686223256,
+       "azimuth_degrees": 180,
+       "area_m2": 48.0,
+       "shade_fraction": 0.06124326915623768
+      },
+      {
+       "pitch_degrees": 5.653692317534624,
+       "azimuth_degrees": 90,
+       "area_m2": 53.1,
+       "shade_fraction": 0.11826609003448885
+      }
+     ],
+     "obstructions": [
+      {
+       "type": "water_tank",
+       "area_m2": 2.9
+      },
+      {
+       "type": "mumty",
+       "area_m2": 7.0
+      },
+      {
+       "type": "parapet",
+       "area_m2": 4.6
+      }
+     ],
+     "annual_kwh_per_kw": 1552.0,
+     "note": "DEMO roof: synthetic but realistic Lahore rooftop. Set GOOGLE_SOLAR_API_KEY for live Google Solar data."
+    },
+    "layout": {
+     "panel_count": 18,
+     "system_kw": 9.9,
+     "usable_area_m2": 75.3,
+     "obstruction_area_m2": 14.5,
+     "panels": [
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 1,
+       "x": 0.15,
+       "y": 4.67,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 1,
+       "x": 2.2,
+       "y": 4.67,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 1,
+       "x": 4.25,
+       "y": 4.67,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 1,
+       "x": 0.15,
+       "y": 5.72,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 1,
+       "x": 2.2,
+       "y": 5.72,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 1,
+       "x": 4.25,
+       "y": 5.72,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 1,
+       "x": 0.15,
+       "y": 6.77,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 1,
+       "x": 2.2,
+       "y": 6.77,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 1,
+       "x": 4.25,
+       "y": 6.77,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      },
+      {
+       "segment": 1,
+       "x": 0.15,
+       "y": 7.82,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 180
+      }
+     ],
+     "segments": [
+      {
+       "x": 0,
+       "y": 0,
+       "w": 6.03,
+       "h": 4.52,
+       "azimuth": 90
+      },
+      {
+       "x": 0,
+       "y": 4.52,
+       "w": 8.0,
+       "h": 6.0,
+       "azimuth": 180
+      }
+     ],
+     "panel_wp": 550
+    },
+    "quote": {
+     "system_kw": 9.9,
+     "panel_count": 18,
+     "annual_generation_kwh": 15365.0,
+     "self_consumed_kwh": 10755.0,
+     "exported_kwh": 4609.0,
+     "equipment_cost_pkr": 1424500.0,
+     "annual_savings_pkr": 556713.0,
+     "payback_years": 2.6,
+     "lifetime_savings_25y_pkr": 35047438.0,
+     "tariff_used": 47.69,
+     "export_rate_used": 9.5
+    },
+    "score": {
+     "score": 80.0,
+     "breakdown": {
+      "usable_area": 63.0,
+      "shade": 73.0,
+      "system_fit": 100.0,
+      "payback": 90.0
+     }
+    },
+    "demo": true
+   }
+  },
+  {
+   "label": "Bahria Town Phase 4 — Rawalpindi",
+   "address": "Bahria Town Phase 4, Rawalpindi",
+   "lat": 33.5214,
+   "lng": 73.0997,
+   "result": {
+    "parsed": {
+     "text": "Bahria Town Phase 4, Rawalpindi",
+     "tokens": [
+      "Bahria",
+      "Town",
+      "Phase",
+      "4",
+      ",",
+      "Rawalpindi"
+     ],
+     "labels": [
+      "B-HOUSE",
+      "B-COLONY",
+      "I-COLONY",
+      "I-COLONY",
+      "O",
+      "B-CITY"
+     ],
+     "house": "Bahria",
+     "street": "",
+     "block": "",
+     "colony": "Town Phase 4",
+     "city": "Rawalpindi"
+    },
+    "geo": {
+     "lat": 33.5214,
+     "lng": 73.0997,
+     "formatted_address": "Bahria Town Phase 4, Rawalpindi",
+     "confidence": "GOLDEN_DEMO",
+     "place_id": null
+    },
+    "roof": {
+     "demo": true,
+     "lat": 33.5214,
+     "lng": 73.0997,
+     "roof_area_m2": 160.7,
+     "usable_area_m2": 148.5,
+     "segments": [
+      {
+       "pitch_degrees": 6.127327198679288,
+       "azimuth_degrees": 90,
+       "area_m2": 88.4,
+       "shade_fraction": 0.14788454345220164
+      },
+      {
+       "pitch_degrees": 1.631069270989613,
+       "azimuth_degrees": 270,
+       "area_m2": 61.0,
+       "shade_fraction": 0.22225226074691123
+      }
+     ],
+     "obstructions": [
+      {
+       "type": "water_tank",
+       "area_m2": 2.5
+      },
+      {
+       "type": "mumty",
+       "area_m2": 5.6
+      },
+      {
+       "type": "parapet",
+       "area_m2": 4.1
+      }
+     ],
+     "annual_kwh_per_kw": 1610.0,
+     "note": "DEMO roof: synthetic but realistic Lahore rooftop. Set GOOGLE_SOLAR_API_KEY for live Google Solar data."
+    },
+    "layout": {
+     "panel_count": 18,
+     "system_kw": 9.9,
+     "usable_area_m2": 76.2,
+     "obstruction_area_m2": 12.2,
+     "panels": [
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 6.3,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 6.3,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 6.3,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 6.3,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 4.35,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 4.35,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      }
+     ],
+     "segments": [
+      {
+       "x": 0,
+       "y": 0,
+       "w": 10.08,
+       "h": 7.56,
+       "azimuth": 90
+      }
+     ],
+     "panel_wp": 550
+    },
+    "quote": {
+     "system_kw": 9.9,
+     "panel_count": 18,
+     "annual_generation_kwh": 15939.0,
+     "self_consumed_kwh": 11157.0,
+     "exported_kwh": 4782.0,
+     "equipment_cost_pkr": 1424500.0,
+     "annual_savings_pkr": 577518.0,
+     "payback_years": 2.5,
+     "lifetime_savings_25y_pkr": 36357201.0,
+     "tariff_used": 47.69,
+     "export_rate_used": 9.5
+    },
+    "score": {
+     "score": 76.0,
+     "breakdown": {
+      "usable_area": 64.0,
+      "shade": 54.0,
+      "system_fit": 100.0,
+      "payback": 92.0
+     }
+    },
+    "demo": true
+   }
+  },
+  {
+   "label": "Clock Tower — Faisalabad",
+   "address": "Clock Tower, Faisalabad",
+   "lat": 31.4187,
+   "lng": 73.0791,
+   "result": {
+    "parsed": {
+     "text": "Clock Tower, Faisalabad",
+     "tokens": [
+      "Clock",
+      "Tower",
+      ",",
+      "Faisalabad"
+     ],
+     "labels": [
+      "B-HOUSE",
+      "B-STREET",
+      "O",
+      "B-CITY"
+     ],
+     "house": "Clock",
+     "street": "Tower",
+     "block": "",
+     "colony": "",
+     "city": "Faisalabad"
+    },
+    "geo": {
+     "lat": 31.4187,
+     "lng": 73.0791,
+     "formatted_address": "Clock Tower, Faisalabad",
+     "confidence": "GOLDEN_DEMO",
+     "place_id": null
+    },
+    "roof": {
+     "demo": true,
+     "lat": 31.4187,
+     "lng": 73.0791,
+     "roof_area_m2": 178.2,
+     "usable_area_m2": 167.0,
+     "segments": [
+      {
+       "pitch_degrees": 5.311576388650799,
+       "azimuth_degrees": 90,
+       "area_m2": 94.3,
+       "shade_fraction": 0.20530167948816114
+      },
+      {
+       "pitch_degrees": 0.18621559930048193,
+       "azimuth_degrees": 90,
+       "area_m2": 71.6,
+       "shade_fraction": 0.224582117691706
+      }
+     ],
+     "obstructions": [
+      {
+       "type": "water_tank",
+       "area_m2": 3.8
+      },
+      {
+       "type": "mumty",
+       "area_m2": 7.4
+      }
+     ],
+     "annual_kwh_per_kw": 1599.0,
+     "note": "DEMO roof: synthetic but realistic Lahore rooftop. Set GOOGLE_SOLAR_API_KEY for live Google Solar data."
+    },
+    "layout": {
+     "panel_count": 18,
+     "system_kw": 9.9,
+     "usable_area_m2": 83.1,
+     "obstruction_area_m2": 11.2,
+     "panels": [
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 6.3,
+       "y": 0.15,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 6.3,
+       "y": 1.2,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 6.3,
+       "y": 2.25,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 4.25,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 6.3,
+       "y": 3.3,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 0.15,
+       "y": 4.35,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      },
+      {
+       "segment": 0,
+       "x": 2.2,
+       "y": 4.35,
+       "w": 2.0,
+       "h": 1.0,
+       "azimuth": 90
+      }
+     ],
+     "segments": [
+      {
+       "x": 0,
+       "y": 0,
+       "w": 10.53,
+       "h": 7.89,
+       "azimuth": 90
+      }
+     ],
+     "panel_wp": 550
+    },
+    "quote": {
+     "system_kw": 9.9,
+     "panel_count": 18,
+     "annual_generation_kwh": 15830.0,
+     "self_consumed_kwh": 11081.0,
+     "exported_kwh": 4749.0,
+     "equipment_cost_pkr": 1424500.0,
+     "annual_savings_pkr": 573572.0,
+     "payback_years": 2.5,
+     "lifetime_savings_25y_pkr": 36108798.0,
+     "tariff_used": 47.69,
+     "export_rate_used": 9.5
+    },
+    "score": {
+     "score": 76.0,
+     "breakdown": {
+      "usable_area": 69.0,
+      "shade": 46.0,
+      "system_fit": 100.0,
+      "payback": 92.0
+     }
+    },
+    "demo": true
+   }
+  }
+ ]
+}

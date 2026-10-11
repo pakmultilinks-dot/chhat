@@ -91,6 +91,13 @@
     <div id="err1" class="err"></div>
   </div>
 
+  <div class="card" id="goldenCard" style="display:none;border:2px solid var(--amber)">
+    <h3 style="margin-top:0">⚡ Offline demo mode</h3>
+    <p class="hint">The live backend is unreachable. Load a precomputed golden demo — the full report renders with zero backend.</p>
+    <select id="goldenPick" style="width:100%;padding:12px;font-size:15px;border-radius:10px;border:2px solid #d6d3d1"></select>
+    <button class="go" id="goldenGo">Load golden demo →</button>
+  </div>
+
   <div class="card step" id="step2">
     <h3>{{ s.parsed_title }}</h3>
     <div class="fields" id="fields"></div>
@@ -136,10 +143,41 @@
   </div>
 </main>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script id="goldenData" type="application/json">{{ golden_json | safe }}</script>
 <script>
 const UI = {{ ui_json | safe }};
 const $ = id => document.getElementById(id);
 let lat = null, lng = null, map = null, marker = null;
+
+/* ---------- golden offline fallback ---------- */
+let GOLDEN = [];
+try { GOLDEN = JSON.parse($('goldenData').textContent).demos || []; } catch(e) { GOLDEN = []; }
+async function ensureGolden(){
+  if (GOLDEN.length) return GOLDEN;
+  try {
+    const r = await fetch('/golden-demos.json');
+    const j = await r.json();
+    GOLDEN = j.demos || [];
+  } catch(e) { GOLDEN = []; }
+  return GOLDEN;
+}
+function showGoldenCard(msg){
+  const sel = $('goldenPick');
+  ensureGolden().then(() => {
+    sel.innerHTML = GOLDEN.map((g,i) =>
+      `<option value="${i}">${g.label} — score ${g.result.score.score}/100</option>`).join('')
+      || '<option value="">(no golden demos available)</option>';
+    $('goldenCard').style.display = 'block';
+    if (msg) $('err1').textContent = msg;
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  });
+}
+$('goldenGo').onclick = () => {
+  const g = GOLDEN[+$('goldenPick').value];
+  if (!g) return;
+  lat = g.lat; lng = g.lng;
+  renderReport(g.result);   // full report, zero backend calls
+};
 
 function show(id, pill){
   document.querySelectorAll('.step').forEach(e=>e.classList.remove('on'));
@@ -175,19 +213,14 @@ $('go').onclick = async () => {
     setTimeout(() => map.invalidateSize(), 100);
     marker = L.marker([lat,lng], {draggable:true}).addTo(map);
     marker.on('dragend', () => { const ll = marker.getLatLng(); lat = ll.lat; lng = ll.lng; });
-  } catch(e){ $('err1').textContent = e.message; }
+  } catch(e){
+    $('err1').textContent = e.message;
+    showGoldenCard('Address parsing failed (' + e.message + '). Golden demo available below.');
+  }
   busy($('go'), false, UI.analyze);
 };
 
-$('confirm').onclick = async () => {
-  const address = $('addr').value.trim();
-  busy($('confirm'), true); $('err2').textContent = '';
-  try {
-    const r = await fetch('/api/analyze', {method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({address, lat, lng})});
-    const d = await r.json();
-    if(d.error) throw new Error(d.error);
+function renderReport(d){
     if(d.demo) $('demoBadge').style.display = 'block';
     const sc = d.score.score;
     const ring = $('ring');
@@ -228,7 +261,22 @@ $('confirm').onclick = async () => {
       `Tariff Rs ${d.quote.tariff_used}/unit, export Rs ${d.quote.export_rate_used}/unit (net billing). ` +
       `${UI.usable_roof} ${d.layout.usable_area_m2} m². ${d.roof.note || ''}`;
     show('step3', 'pill3');
-  } catch(e){ $('err2').textContent = e.message; }
+}
+
+$('confirm').onclick = async () => {
+  const address = $('addr').value.trim();
+  busy($('confirm'), true); $('err2').textContent = '';
+  try {
+    const r = await fetch('/api/analyze', {method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({address, lat, lng})});
+    const d = await r.json();
+    if(d.error) throw new Error(d.error);
+    renderReport(d);
+  } catch(e){
+    $('err2').textContent = e.message;
+    showGoldenCard('Live analysis failed (' + e.message + '). Golden demo available below.');
+  }
   busy($('confirm'), false, UI.confirm);
 };
 
