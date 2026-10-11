@@ -35,7 +35,11 @@ def parser() -> AddressParser:
 STRINGS = {
     "en": {
         "title": "Chhat — AI rooftop solar intelligence",
-        "tagline": "Paste your home address. We score your roof.",
+        "tagline": "Paste your home address. Our AI scores your roof for solar — system size, PKR quote, payback.",
+        "sub": "Trained Pakistani-address parser · own rooftop intelligence · net-billing era sizing · English/اردو",
+        "golden_title": "⚡ Offline demo mode",
+        "golden_hint": "The live backend is unreachable. Load a precomputed golden demo — the full report renders with zero backend.",
+        "golden_go": "Load golden demo →",
         "address_ph": "House 123, Street 4, Block C, Nishat Colony, Lahore",
         "analyze": "Analyze my roof",
         "demo_badge": "DEMO — all roof figures are estimates. Our own trained segmentation model reads the live imagery in step 4.",
@@ -53,8 +57,10 @@ STRINGS = {
         "usable_roof": "Usable roof",
         "est_tag": "(estimate)",
         "step4": "Roof AI",
-        "roofai_title": "Roof Analysis — our own trained model",
-        "roofai_hint": "Our TinyUNet rooftop segmenter, trained from scratch on Lahore aerial data, reads real satellite imagery of your pinned location.",
+        "roofai_title": "Roof Analysis — our own trained models",
+        "roofai_hint": "Two rooftop segmenters trained from scratch on Lahore aerial data (v2 generalist + v3 dense-street specialist) read real satellite imagery of your pinned location. The more confident model answers.",
+        "model_used_label": "Model used",
+        "model_v2": "v2 generalist", "model_v3": "v3 dense-street specialist",
         "see_ai": "See what our AI sees →",
         "overlay_label": "Show predicted roofs",
         "conf_label": "Model confidence",
@@ -65,7 +71,11 @@ STRINGS = {
     },
     "ur": {
         "title": "چھت — شمسی توانائی کی ذہین معلومات",
-        "tagline": "اپنا پتہ لکھیں۔ ہم آپ کی چھت کا اسکور بتاتے ہیں۔",
+        "tagline": "اپنا پتہ لکھیں۔ ہماری AI آپ کی چھت کا اسکور بتاتی ہے — سسٹم سائز، روپے میں قیمت، واپسی کی مدت۔",
+        "sub": "تربیت یافتہ پاکستانی پتہ پارسر · اپنی چھت کی ذہانت · نیٹ بلنگ دور کی سائزنگ · English/اردو",
+        "golden_title": "⚡ آف لائن ڈیمو موڈ",
+        "golden_hint": "لائیو بیک اینڈ دستیاب نہیں۔ پہلے سے تیار کردہ گولڈن ڈیمو لوڈ کریں — مکمل رپورٹ بغیر بیک اینڈ کے ظاہر ہوگی۔",
+        "golden_go": "← گولڈن ڈیمو لوڈ کریں",
         "address_ph": "مکان 123، گلی 4، بلاک C، نشاط کالونی، لاہور",
         "analyze": "میری چھت کا تجزیہ کریں",
         "demo_badge": "ڈیمو — چھت کے تمام اعداد تخمینہ ہیں۔ ہمارا اپنا تربیت یافتہ ماڈل مرحلہ 4 میں اصل تصویر پڑھتا ہے۔",
@@ -84,8 +94,10 @@ STRINGS = {
         "usable_roof": "قابل استعمال چھت",
         "est_tag": "(تخمینہ)",
         "step4": "چھت AI",
-        "roofai_title": "چھت کا تجزیہ — ہمارا اپنا تربیت یافتہ ماڈل",
-        "roofai_hint": "ہمارا TinyUNet ماڈل، جو لاہور کی فضائی تصاویر پر تربیت یافتہ ہے، آپ کے مقام کی اصل سیٹلائٹ تصویر پڑھتا ہے۔",
+        "roofai_title": "چھت کا تجزیہ — ہمارے اپنے تربیت یافتہ ماڈل",
+        "roofai_hint": "لاہور کی فضائی تصاویر پر تربیت یافتہ دو ماڈل (v2 جنرلسٹ + v3 گنجان آبادی کے ماہر) آپ کے مقام کی اصل سیٹلائٹ تصویر پڑھتے ہیں۔ زیادہ پراعتماد ماڈل جواب دیتا ہے۔",
+        "model_used_label": "استعمال شدہ ماڈل",
+        "model_v2": "v2 جنرلسٹ", "model_v3": "v3 گنجان آبادی کا ماہر",
         "see_ai": "دیکھیں ہمارا AI کیا دیکھتا ہے ←",
         "overlay_label": "متوقع چھتیں دکھائیں",
         "conf_label": "ماڈل کا اعتماد",
@@ -193,16 +205,18 @@ def api_roofseg():
     if lat is None or lng is None:
         return jsonify({"error": "missing lat/lng"}), 400
     try:
-        from chhat.roofseg.predict import predict
+        from chhat.roofseg.predict import MODEL_LABELS, predict_best
         import numpy as np
         img, source = roof_imagery(float(lat), float(lng))
         if img is None or img.size == 0:
             return jsonify({"error": "imagery unavailable for this point"}), 502
-        res = predict(img)
+        res = predict_best(img)
         out = {
             "status": res["status"],
             "confidence": round(res["confidence"], 3),
             "building_fraction": round(res["building_fraction"], 3),
+            "model_used": res["model"],
+            "model_label": MODEL_LABELS.get(res["model"], ""),
             "source": source,
             "imagery": _b64_png(img),
             "overlay": None,

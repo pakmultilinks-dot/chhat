@@ -73,9 +73,9 @@
 <header>
   <div class="lang"><a href="/?lang=en">EN</a><a href="/?lang=ur">اردو</a></div>
   <h1>☀️ چھت Chhat</h1>
-  <p class="one-liner">Paste your home address. Our AI scores your roof for solar — system size, PKR quote, payback.</p>
-  <p class="sub">Trained Pakistani-address parser · own rooftop intelligence · net-billing era sizing · English/اردو</p>
-  <div class="how"><span>1 · Address</span><span>2 · Confirm pin</span><span>3 · Roof report</span></div>
+  <p class="one-liner">{{ s.tagline }}</p>
+  <p class="sub">{{ s.sub }}</p>
+  <div class="how"><span>1 · {{ s.step1 }}</span><span>2 · {{ s.step2 }}</span><span>3 · {{ s.step3 }}</span><span>4 · {{ s.step4 }}</span></div>
 </header>
 <main>
   <div class="steps-bar">
@@ -92,10 +92,10 @@
   </div>
 
   <div class="card" id="goldenCard" style="display:none;border:2px solid var(--amber)">
-    <h3 style="margin-top:0">⚡ Offline demo mode</h3>
-    <p class="hint">The live backend is unreachable. Load a precomputed golden demo — the full report renders with zero backend.</p>
+    <h3 style="margin-top:0">{{ s.golden_title }}</h3>
+    <p class="hint">{{ s.golden_hint }}</p>
     <select id="goldenPick" style="width:100%;padding:12px;font-size:15px;border-radius:10px;border:2px solid #d6d3d1"></select>
-    <button class="go" id="goldenGo">Load golden demo →</button>
+    <button class="go" id="goldenGo">{{ s.golden_go }}</button>
   </div>
 
   <div class="card step" id="step2">
@@ -137,6 +137,7 @@
       </div>
     </div>
     <p class="hint" id="aiSource" style="font-size:12px"></p>
+    <p class="hint" id="aiModel" style="font-size:12px"></p>
     <p class="err" id="unsureNote" style="display:none">{{ s.unsure_note }}</p>
     <button class="go" id="backReport" style="background:#e7e5e4;color:#1c1917">{{ s.back_report }}</button>
     <div id="err4" class="err"></div>
@@ -309,6 +310,9 @@ $('seeAi').onclick = async () => {
       $('unsureNote').style.display = 'block';
     }
     $('aiSource').textContent = d.source;
+    $('aiModel').textContent = d.model_used
+      ? UI.model_used_label + ': ' + (UI['model_' + d.model_used] || d.model_label || d.model_used)
+      : '';
     show('step4', 'pill4');
   } catch(e){ $('err3').textContent = e.message; }
   busy($('seeAi'), false, UI.see_ai);
