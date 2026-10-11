@@ -7,14 +7,24 @@ built by us from open data. Used to train `models/rooftop_seg.pt` (our own U-Net
 
 **Sources:**
 - Building footprints: **OpenStreetMap** (ODbL 1.0, © OpenStreetMap contributors),
-  fetched via `api.openstreetmap.org` for a 3x3 km dense residential region of
-  Lahore, Pakistan (DHA-adjacent, ~31.48N 74.31E).
+  fetched via `api.openstreetmap.org` for three dense residential regions of
+  Lahore, Pakistan:
+  - **dha** (DHA-adjacent, ~31.470N 74.325E) — 161 chips
+  - **dha5** (DHA Phase 5, ~31.462N 74.395E, 1,048 OSM buildings in probe) — 419 chips
+  - **johartown** (Johar Town, ~31.470N 74.273E, 344 OSM buildings in probe) — 96 chips
+  Model Town was probed but dropped: only 14 OSM buildings in the quadrant
+  (too sparse to be useful).
 - Satellite imagery: **Esri World Imagery** (z18, ~0.6 m/pixel), tile server
   `server.arcgisonline.com`. Used under Esri's terms for development.
 
-**Build:** `scripts/build_roofseg_data.py` downloads OSM buildings, stitches Esri
-tiles into a mosaic, rasterizes footprints to masks, chips 256x256 keeping
-5-95% building coverage, splits 80/10/10 (seed 7).
+**Build:** `scripts/build_roofseg_data.py` downloads OSM buildings per region,
+stitches Esri tiles into a per-region mosaic (cached under
+`data/roofseg_regions/<name>/`), rasterizes footprints to masks, chips
+256x256 keeping 5-95% building coverage, merges regions, and splits 80/10/10
+(seed 7).
+
+**Size (2026-10-11, Wave 5):** 676 chips — train 540 / val 68 / test 68.
+Reproducible with one script (`data/` itself is gitignored, 50+ MB).
 
 **Honest limitations:**
 - OSM footprints and Esri imagery were captured at different times: some masks
