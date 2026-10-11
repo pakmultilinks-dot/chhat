@@ -18,6 +18,7 @@ import cv2
 import numpy as np
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 
 from .model import TinyUNet, count_params
@@ -69,11 +70,30 @@ def iou_score(logits, targets, eps=1e-6):
     return float((inter + eps) / (union + eps))
 
 
+def boundary_weights(targets, bw):
+    """Per-pixel weights emphasizing a band around building edges.
+
+    Merging neighboring houses and spilling into streets are boundary
+    errors; plain BCE barely penalizes them (few pixels). Weighting the
+    edge band ~1+bw x forces crisp, separated masks.
+    """
+    with torch.no_grad():
+        dil = F.max_pool2d(targets, 5, stride=1, padding=2)
+        ero = -F.max_pool2d(-targets, 5, stride=1, padding=2)
+        edge = (dil - ero).clamp(0, 1)
+        band = F.max_pool2d(edge, 9, stride=1, padding=4)
+    return 1.0 + bw * band
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--epochs", type=int, default=30)
     ap.add_argument("--batch", type=int, default=8)
     ap.add_argument("--lr", type=float, default=1e-3)
+    ap.add_argument("--wd", type=float, default=0.0, help="Adam weight decay")
+    ap.add_argument("--bw", type=float, default=0.0,
+                    help="boundary weight: extra BCE weight on pixels near building "
+                         "edges (fights blobby merged masks / street spill). 0=off")
     ap.add_argument("--patience", type=int, default=6)
     ap.add_argument("--resume", type=str, default=None,
                     help="path to checkpoint .pt to resume from (keeps its val_iou as best)")
@@ -96,7 +116,7 @@ def main():
 
     model = TinyUNet().to(device)
     print(f"params: {count_params(model):,}", flush=True)
-    opt = torch.optim.Adam(model.parameters(), lr=args.lr)
+    opt = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.wd)
     bce = nn.BCEWithLogitsLoss()
 
     best_iou, bad, t0 = 0.0, 0, time.time()
@@ -114,7 +134,12 @@ def main():
             x, y = x.to(device), y.to(device)
             opt.zero_grad()
             out = model(x)
-            loss = bce(out, y) + dice_loss(out, y)
+            if args.bw > 0:
+                w = boundary_weights(y, args.bw)
+                bce_l = (F.binary_cross_entropy_with_logits(out, y, reduction="none") * w).sum() / w.sum()
+            else:
+                bce_l = bce(out, y)
+            loss = bce_l + dice_loss(out, y)
             loss.backward()
             opt.step()
             tot += loss.item()
@@ -165,7 +190,10 @@ def main():
         f.write("- Split: SPATIAL (west/middle/east zones per region, one-stride buffer "
                 "dropped) — no overlapping-chip leakage between train/val/test.\n")
         f.write("- Augmentation: flips, 90-degree rotations, brightness/contrast jitter.\n")
-        f.write(f"- Loss: BCE + Dice. Best val IoU: {best_iou:.4f}\n")
+        f.write(f"- Loss: BCE + Dice"
+                + (f" + boundary-weighted BCE (bw={args.bw}, edge band weighted {1+args.bw:.0f}x "
+                   f"to separate adjacent houses)" if args.bw > 0 else "")
+                + f". Best val IoU: {best_iou:.4f}\n")
         f.write(f"- **Test IoU: {tiou:.4f} | Test Dice: {tdice:.4f}**\n")
         f.write("- Caveat: residual label noise (stale/demolished OSM footprints, per-building "
                 "edits) caps the achievable score; predictions are confidence-gated "

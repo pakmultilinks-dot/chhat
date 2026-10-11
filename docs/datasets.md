@@ -19,18 +19,29 @@ built by us from open data. Used to train `models/rooftop_seg.pt` (our own U-Net
 
 **Build:** `scripts/build_roofseg_data.py` downloads OSM buildings per region,
 stitches Esri tiles into a per-region mosaic (cached under
-`data/roofseg_regions/<name>/`), rasterizes footprints to masks, chips
-256x256 keeping 5-95% building coverage, merges regions, and splits 80/10/10
-(seed 7).
+`data/roofseg_regions/<name>/`), corrects the measured systematic
+OSM→imagery shift per region, rasterizes footprints to masks, chips 256x256
+keeping 1-95% building coverage, and makes a **spatial split**: each region's
+mosaic is divided into west/middle/east zones (train/val/test) with a
+one-stride buffer column dropped between zones, so overlapping neighboring
+chips can never leak across splits.
 
-**Size (2026-10-11, Wave 5):** 676 chips — train 540 / val 68 / test 68.
+**Size (2026-10-11, final push):** 574 chips — train 256 / val 165 / test 153.
 Reproducible with one script (`data/` itself is gitignored, 50+ MB).
 
+**Label alignment (measured, not assumed):** the systematic OSM/Esri offset
+was estimated per region by shifting the OSM mask over ±16 px and maximizing
+mask-boundary vs satellite-image-gradient agreement (80 sampled buildings per
+region, split-half stability checked — both halves agreed and beat zero-shift
+in every region): dha (dx=-1, dy=-2), dha5 (dx=+2, dy=-2), johartown (dx=+6,
+dy=-2) at z18 (~0.6 m/px).
+
 **Honest limitations:**
-- OSM footprints and Esri imagery were captured at different times: some masks
-  are slightly misaligned or stale (demolished/built since mapping). This adds
-  label noise; the model is therefore conservative and every prediction carries
-  a confidence score (see `chhat/roofseg/`).
+- OSM footprints and Esri imagery were captured at different times: beyond the
+  corrected systematic shift, some masks are stale per-building
+  (demolished/built since mapping, OSM edit errors). This residual label noise
+  caps achievable IoU; the model is therefore conservative and every prediction
+  carries a confidence score (see `chhat/roofseg/`).
 - OSM coverage is community-mapped: some real buildings are missing from masks
   (model may "find" buildings the mask missed — this is label noise, not error).
 - Imagery is ~0.6 m/pixel: small structures (water tanks, mumty) are sub-pixel
