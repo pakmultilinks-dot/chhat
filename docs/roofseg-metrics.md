@@ -10,3 +10,24 @@
   but never beat it on val — final weights are the BCE+Dice ones. Best val IoU: 0.2952
 - **Test IoU: 0.3604 | Test Dice: 0.4562**
 - Caveat: residual label noise (stale/demolished OSM footprints, per-building edits) caps the achievable score; predictions are confidence-gated (see chhat/roofseg/predict.py).
+
+---
+
+## Dense-street fine-tune (2026-10-11, accuracy wave)
+
+- **Why**: v2 failed visibly on dense wall-to-wall Lahore streets (user verdict
+  "too wrong" on his own street near Milad Chowk: painted 70% of the image
+  green including roads). OSM footprints are near-absent in dense areas
+  (Nishat Colony 7/km2), so no OSM labels to refine there.
+- **Clean dense set**: 79 human-verified z19 chips (Nishat Colony / Lahore
+  Cantt), labels = morphological proposals + vegetation filter (ExG) +
+  edge-aware boundary snapping to Canny edges. Method + review protocol in
+  `docs/roofseg-dense-streets.md`. Split 24/27/28 (train/val/test).
+- **v3** (`models/rooftop_seg_dense.pt`): fine-tune from v2, lr 1e-4, 25 epochs.
+  Dense-test **IoU 0.3846 / Dice 0.3998**. E378 street: green 70% -> 10%,
+  discrete roof patches instead of whole-neighborhood painting — a real
+  visible leap, but still sparse (misses roofs) and not yet crisp per-house
+  masks. **Catastrophic forgetting**: planned-area IoU collapsed to 0.10.
+- **Joint model** (`models/rooftop_seg_joint.pt`, training): fine-tune from v2
+  on mixed data (dense 4x oversampled + planned), aiming for one model good
+  on both. Result pending; reported honestly when done.
