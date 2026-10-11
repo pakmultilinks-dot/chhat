@@ -61,10 +61,12 @@ IoU. One careful run (plus one joint run, see below) — no endless loops.
 The dense-only fine-tune (v3, `models/rooftop_seg_dense.pt`) is a real,
 visible leap on dense streets but catastrophically forgot planned areas.
 
-## Joint model (in progress)
+## Joint model (attempted, stopped)
 
 To get ONE model good on both, a joint fine-tune on mixed data
 (dense chips 4x oversampled + planned chips, from v2 weights, lr 1e-4)
-is training: `models/rooftop_seg_joint.pt`. Result pending — reported
-honestly when done, including the E378 overlay comparison. If it does
-not beat v2/v3 where it matters, we say so and keep the specialists.
+was attempted (`models/rooftop_seg_joint.pt`). It was stopped early:
+after the restart the val signal stayed weak/noisy (0.23 -> 0.16) and
+epochs ran ~10 min on the loaded CPU. Honest call: the joint model did
+not converge to anything worth shipping. The two specialists stand:
+v2 for planned areas, v3 for dense streets.
