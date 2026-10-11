@@ -12,12 +12,22 @@ data/roofseg/{train,val,test}.
 
 Regions (dense residential Lahore):
   - dha:        (31.470, 74.325)  DHA
-  - modeltown:  (31.485, 74.320)  Model Town
+  - dha5:       (31.462, 74.395)  DHA Phase 5
   - johartown:  (31.470, 74.273)  Johar Town
 
+Label alignment (measured 2026-10-11, not guessed): OSM footprints are
+systematically offset from Esri imagery. Estimated per region by
+maximizing OSM-mask-boundary vs satellite-image-gradient agreement over
+80 sampled buildings, split-half stability checked (both halves agree,
+improvement over zero-shift in every half):
+  - dha:       (dx=-1, dy=-2)
+  - dha5:      (dx=+2, dy=-2)
+  - johartown: (dx=+6, dy=-2)
+(REGION_SHIFT below, in pixels, z18 ~0.6 m/px.)
+
 Known limitation (honest): OSM footprints and Esri imagery are captured at
-different times, so some masks are slightly misaligned or stale. Documented,
-not hidden.
+different times, so some masks are slightly misaligned or stale beyond the
+systematic shift (per-building edits, demolitions). Documented, not hidden.
 """
 import math
 import os
@@ -40,6 +50,23 @@ OUT = os.path.join(os.path.dirname(__file__), "..", "data", "roofseg")
 REGION_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "roofseg_regions")
 TILE_URL = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
 UA = {"User-Agent": "chhat-roofseg-dataset-builder (research project)"}
+
+# Measured systematic OSM -> Esri misalignment, pixels (see module docstring).
+# Applied to masks so labels line up with the imagery they describe.
+REGION_SHIFT = {
+    "dha": (-1, -2),
+    "dha5": (2, -2),
+    "johartown": (6, -2),
+}
+
+
+def apply_shift(mask, name):
+    dx, dy = REGION_SHIFT.get(name, (0, 0))
+    if dx == 0 and dy == 0:
+        return mask
+    M = np.float32([[1, 0, dx], [0, 1, dy]])
+    return cv2.warpAffine(mask, M, (mask.shape[1], mask.shape[0]),
+                          flags=cv2.INTER_NEAREST, borderValue=0)
 
 
 def latlon_to_tile(lat, lon, z):
@@ -73,6 +100,8 @@ def build_region(name, clat, clon):
         mosaic = cv2.imread(mosaic_path)
         mask = cv2.imread(mask_path, cv2.IMREAD_GRAYSCALE) // 255
         H, W = mask.shape
+        # cached masks predate the measured shift correction -> shift them too
+        mask = apply_shift(mask, name)
     else:
         # 1. OSM buildings
         print(f"[{name}] downloading OSM buildings...", flush=True)
@@ -128,37 +157,61 @@ def build_region(name, clat, clon):
 
         # 3. rasterize masks
         mask = np.zeros((H, W), np.uint8)
+        dx, dy = REGION_SHIFT.get(name, (0, 0))
+
+        def project_shifted(lat, lon):
+            px, py = project(lat, lon)
+            return px + dx, py + dy
+
         for pts in polys:
-            pp = np.array([project(la, lo) for la, lo in pts], np.int32)
+            pp = np.array([project_shifted(la, lo) for la, lo in pts], np.int32)
             cv2.fillPoly(mask, [pp], 1)
         cv2.imwrite(mosaic_path, mosaic)
         cv2.imwrite(mask_path, mask * 255)
     print(f"[{name}] mask building px: {mask.sum()} ({100*mask.sum()/mask.size:.1f}%)", flush=True)
 
-    # 4. chip 256x256 stride 128, keep 1-95% coverage
+    # 4. chip 256x256 stride 128, keep 1-95% coverage; record coords for
+    #    the spatial (geographic-zone) split in main()
     chips = []
     for cy in range(0, H - 255, 128):
         for cx in range(0, W - 255, 128):
             m = mask[cy:cy+256, cx:cx+256]
             cov = m.mean()
             if 0.01 <= cov <= 0.95:
-                chips.append((mosaic[cy:cy+256, cx:cx+256].copy(), (m * 255).astype(np.uint8)))
+                chips.append((mosaic[cy:cy+256, cx:cx+256].copy(),
+                              (m * 255).astype(np.uint8), cx, cy, W))
     print(f"[{name}] chips kept: {len(chips)}", flush=True)
     return chips
 
 
 def main():
-    all_chips = []
+    # Spatial (geographic-zone) split, per region: overlapping chips (stride
+    # 128 < 256) are spatial neighbors, so a random shuffle split leaks test
+    # buildings into train. Instead, split each mosaic into west/middle/east
+    # zones with a one-stride buffer column dropped between zones.
+    splits = {"train": [], "val": [], "test": []}
     for name, clat, clon in REGIONS:
         chips = build_region(name, clat, clon)
-        all_chips.extend([(name, im, mk) for im, mk in chips])
-    print(f"total chips: {len(all_chips)}", flush=True)
+        W = chips[0][4]
+        z1, z2 = W / 3.0, 2 * W / 3.0
+        buf = 128
+        for im, mk, cx, cy, _ in chips:
+            if cx < z1 - buf:
+                splits["train"].append((name, im, mk))
+            elif z1 + buf <= cx < z2 - buf:
+                splits["val"].append((name, im, mk))
+            elif cx >= z2 + buf:
+                splits["test"].append((name, im, mk))
+            # else: buffer column, dropped
+        print(f"[{name}] -> train/val/test zones split done", flush=True)
+    total = sum(len(v) for v in splits.values())
+    print(f"total chips kept: {total} "
+          f"(train {len(splits['train'])} val {len(splits['val'])} test {len(splits['test'])})",
+          flush=True)
 
     rng = np.random.default_rng(7)
-    rng.shuffle(all_chips)
-    n = len(all_chips)
-    splits = {"train": all_chips[:int(.8*n)], "val": all_chips[int(.8*n):int(.9*n)],
-              "test": all_chips[int(.9*n):]}
+    for v in splits.values():
+        rng.shuffle(v)
     # wipe old split dirs (fresh merge)
     if os.path.exists(OUT):
         shutil.rmtree(OUT)
@@ -169,9 +222,10 @@ def main():
             cv2.imwrite(os.path.join(idir, f"{region}_{name}_{i:04d}.png"), im)
             cv2.imwrite(os.path.join(mdir, f"{region}_{name}_{i:04d}.png"), mk)
         print(f"{name}: {len(items)}", flush=True)
-    if all_chips:
+    flat = [c for v in splits.values() for c in v]
+    if flat:
         prev = np.hstack([np.vstack([c[1], cv2.cvtColor(c[2], cv2.COLOR_GRAY2BGR)])
-                          for c in all_chips[:6]])
+                          for c in flat[:6]])
         cv2.imwrite(os.path.join(OUT, "preview.png"), prev)
     print("done ->", OUT, flush=True)
 

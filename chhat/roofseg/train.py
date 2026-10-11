@@ -38,10 +38,18 @@ class RoofSegDataset(Dataset):
         img = cv2.imread(p).astype(np.float32) / 255.0
         msk = cv2.imread(p.replace("/images/", "/masks/"), cv2.IMREAD_GRAYSCALE)
         msk = (msk > 127).astype(np.float32)
-        if self.augment and np.random.rand() < 0.5:
-            img, msk = img[:, ::-1].copy(), msk[:, ::-1].copy()
-        if self.augment and np.random.rand() < 0.5:
-            img, msk = img[::-1].copy(), msk[::-1].copy()
+        if self.augment:
+            if np.random.rand() < 0.5:  # horizontal flip
+                img, msk = img[:, ::-1].copy(), msk[:, ::-1].copy()
+            if np.random.rand() < 0.5:  # vertical flip
+                img, msk = img[::-1].copy(), msk[::-1].copy()
+            k = np.random.choice([0, 1, 2, 3], p=[0.4, 0.2, 0.2, 0.2])  # 90 deg rotations
+            if k:
+                img = np.ascontiguousarray(np.rot90(img, k))
+                msk = np.ascontiguousarray(np.rot90(msk, k))
+            b = np.random.uniform(0.8, 1.2)  # brightness jitter
+            c = np.random.uniform(0.9, 1.1)  # contrast jitter
+            img = np.clip((img - 0.5) * c + 0.5 * b, 0, 1).astype(np.float32)
         img = torch.from_numpy(img.transpose(2, 0, 1))
         msk = torch.from_numpy(msk).unsqueeze(0)
         return img, msk
@@ -146,13 +154,22 @@ def main():
     print(f"TEST IoU {tiou:.4f} Dice {tdice:.4f}", flush=True)
     with open(os.path.join(os.path.dirname(__file__), "..", "..", "docs", "roofseg-metrics.md"), "w") as f:
         f.write("# rooftop_seg metrics (honest)\n\n")
-        f.write(f"- Model: TinyUNet from scratch, {count_params(model):,} params, 256x256, CPU\n")
-        f.write(f"- Data: OSM footprints + Esri imagery, Lahore. train {len(train_ds)}, "
-                f"val {len(val_ds)}, test {len(test_ds)}\n")
-        f.write(f"- Best val IoU: {best_iou:.4f}\n")
+        f.write(f"- Model: TinyUNet v2 from scratch (4-level U-Net), {count_params(model):,} params, "
+                f"256x256, CPU. No pretrained backbone.\n")
+        f.write(f"- Data: OSM footprints + Esri World Imagery (z18), 3 Lahore regions "
+                f"(DHA / DHA Phase 5 / Johar Town). "
+                f"train {len(train_ds)}, val {len(val_ds)}, test {len(test_ds)}\n")
+        f.write("- Labels: measured systematic OSM->Esri shift corrected per region "
+                "(dha -1,-2; dha5 +2,-2; johartown +6,-2 px), estimated from mask-boundary "
+                "vs image-gradient agreement, split-half stable.\n")
+        f.write("- Split: SPATIAL (west/middle/east zones per region, one-stride buffer "
+                "dropped) — no overlapping-chip leakage between train/val/test.\n")
+        f.write("- Augmentation: flips, 90-degree rotations, brightness/contrast jitter.\n")
+        f.write(f"- Loss: BCE + Dice. Best val IoU: {best_iou:.4f}\n")
         f.write(f"- **Test IoU: {tiou:.4f} | Test Dice: {tdice:.4f}**\n")
-        f.write("- Caveat: OSM/Esri label noise (misalignment, stale footprints) caps the "
-                "achievable score; predictions are confidence-gated (see chhat/roofseg/predict.py).\n")
+        f.write("- Caveat: residual label noise (stale/demolished OSM footprints, per-building "
+                "edits) caps the achievable score; predictions are confidence-gated "
+                "(see chhat/roofseg/predict.py).\n")
 
 
 if __name__ == "__main__":
