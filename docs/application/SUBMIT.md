@@ -38,9 +38,12 @@ NOTE for the form: all championship work is on branch **`dev/satellite-eye`**
 ## 7. Live demo
 https://chhat-pakmultilinks-dot.vercel.app/
 
-STATUS (verified 2026-10-11 11:24 PKT): homepage loads fine (HTTP 200, ~2s).
-`/api/parse` and `/api/analyze` currently time out — Vercel API rate limit
-from the deploy wave; expected reset ~2026-10-11 21:36 UTC (~02:36 PKT Oct 12).
+STATUS (re-verified 2026-10-11 17:05 PKT): homepage loads fine (HTTP 200, ~2s).
+`/api/parse` and `/api/analyze` return HTTP 501 — the live deployment is STALE
+(built Oct 10 during the deploy wave; it serves an old weights-check handler,
+not the Flask app). Fix: ONE redeploy of branch `dev/satellite-eye` after the
+Vercel API rate limit resets ~2026-10-11 21:36 UTC (~02:36 PKT Oct 12).
+Do not spam redeploys before then.
 If the form is submitted before the reset, use the fallback below.
 
 FALLBACK: local demo — clone the repo, check out `dev/satellite-eye`,
