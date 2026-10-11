@@ -10,10 +10,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Noto+Nastaliq+Urdu:wght@600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --night0:#040914; --night1:#081222; --night2:#0d1a30; --line:#1e2f4d;
+    --night0:#03060e; --night1:#071120; --night2:#0d1a30; --line:#1e2f4d;
     --amber:#fbbf24; --amber-deep:#f59e0b; --amber-soft:#fde68a;
     --roof:#34d399; --roof-deep:#10b981;
-    --ink:#e9f0fa; --muted:#93a4bd; --faint:#5d7189;
+    --ink:#eef3fb; --muted:#93a4bd; --faint:#5d7189;
     --card:#0b1628; --card2:#0e1c33;
     --display:"Space Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
     --urdu:"Noto Nastaliq Urdu","Jameel Noori Nastaleeq",serif;
@@ -41,19 +41,31 @@
       radial-gradient(1px 1px at 24% 88%, #ffffff66 50%, transparent 51%),
       linear-gradient(180deg, var(--night0), var(--night1) 60%, var(--night0));
   }
+  /* film grain + vignette: cinematic finish */
+  body::after{
+    content:""; position:fixed; inset:0; z-index:60; pointer-events:none; opacity:.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  ::selection{background:#f59e0b88; color:#fff}
   /* ============ HERO ============ */
   header{
     position:relative; overflow:hidden; text-align:center;
-    padding:64px 20px 46px;
+    padding:76px 20px 56px;
     background:
-      radial-gradient(640px 340px at 50% -60px, #f59e0b22, transparent 70%),
-      radial-gradient(900px 500px at 50% 120%, #10b98114, transparent 70%);
+      radial-gradient(700px 380px at 50% -60px, #f59e0b2e, transparent 70%),
+      radial-gradient(1000px 560px at 50% 130%, #10b98117, transparent 70%),
+      radial-gradient(500px 300px at 12% 40%, #3b82f612, transparent 70%);
   }
   .sweep{position:absolute; inset:0; overflow:hidden; pointer-events:none}
   .sweep::before{
     content:""; position:absolute; top:-25%; bottom:-25%; width:130px; left:-180px;
     background:linear-gradient(90deg, transparent, rgba(251,191,36,.16), transparent);
     transform:skewX(-14deg); animation:sweep 7s linear infinite;
+  }
+  .sweep::after{
+    content:""; position:absolute; top:-25%; bottom:-25%; width:70px; left:-140px;
+    background:linear-gradient(90deg, transparent, rgba(52,211,153,.12), transparent);
+    transform:skewX(-14deg); animation:sweep 11s linear infinite; animation-delay:2.5s;
   }
   @keyframes sweep{ to{ left:112%; } }
   .lang{position:absolute; top:16px; right:18px; z-index:3}
@@ -64,15 +76,17 @@
     padding:7px 14px; border-radius:999px; font-family:var(--display);
   }
   .lang button.on{background:var(--amber); color:#231303; border-color:var(--amber)}
-  /* satellite eye */
+  /* satellite eye with orbiting satellite */
   .eye{
-    width:148px; height:148px; border-radius:50%; margin:6px auto 18px; position:relative;
+    width:168px; height:168px; border-radius:50%; margin:6px auto 20px; position:relative;
     border:2px solid #fbbf2455;
     background:
       radial-gradient(circle, var(--amber) 0 7%, #3a2a08 8%, var(--night2) 26% 58%, transparent 59%),
       repeating-radial-gradient(circle at 50% 50%, #22385c 0 2px, transparent 2px 16px);
-    box-shadow:0 0 44px #f59e0b33, inset 0 0 30px #00000088;
+    box-shadow:0 0 60px #f59e0b40, 0 0 120px #f59e0b18, inset 0 0 30px #00000088;
+    animation:eyebreathe 5s ease-in-out infinite;
   }
+  @keyframes eyebreathe{ 0%,100%{box-shadow:0 0 60px #f59e0b40, 0 0 120px #f59e0b18, inset 0 0 30px #00000088} 50%{box-shadow:0 0 84px #f59e0b55, 0 0 150px #f59e0b22, inset 0 0 30px #00000088} }
   .eye::before{
     content:""; position:absolute; inset:10px; border-radius:50%;
     background:conic-gradient(from 0deg, rgba(52,211,153,.55), transparent 24%, transparent);
@@ -82,41 +96,67 @@
     content:""; position:absolute; inset:34px; border-radius:50%;
     border:1px dashed #34d39966; animation:radarsweep 9s linear infinite reverse;
   }
+  /* orbit ring + satellite dot circling the eye */
+  .orbit{position:absolute; inset:-18px; border-radius:50%; border:1px solid #fbbf2422;
+    animation:radarsweep 12s linear infinite; pointer-events:none}
+  .orbit i{position:absolute; top:-5px; left:50%; width:10px; height:10px; margin-left:-5px;
+    border-radius:50%; background:var(--roof); box-shadow:0 0 12px var(--roof), 0 0 26px var(--roof)}
+  .orbit i::after{content:""; position:absolute; top:14px; left:50%; width:1px; height:26px;
+    background:linear-gradient(180deg, #34d39988, transparent); transform:translateX(-50%)}
   @keyframes radarsweep{ to{ transform:rotate(360deg); } }
-  .wordmark{font-family:var(--urdu); font-size:64px; line-height:1.5; margin:0;
+  .wordmark{font-family:var(--urdu); font-size:clamp(64px, 18vw, 108px); line-height:1.6; margin:0;
     color:var(--amber);
-    filter:drop-shadow(0 2px 14px #f59e0b44);}
+    filter:drop-shadow(0 2px 18px #f59e0b55);}
   @supports ((-webkit-background-clip:text) or (background-clip:text)){
     .wordmark{
-      background:linear-gradient(180deg, var(--amber-soft), var(--amber-deep));
+      background:linear-gradient(180deg, #fff7e0 5%, var(--amber-soft) 30%, var(--amber-deep) 75%, #b45309);
       -webkit-background-clip:text; background-clip:text; color:transparent;
     }
   }
   .wordmark-en{
-    font-family:var(--display); font-weight:700; letter-spacing:14px; font-size:22px;
-    color:var(--ink); margin:2px 0 0; text-indent:14px;
+    font-family:var(--display); font-weight:700; letter-spacing:16px; font-size:24px;
+    color:var(--ink); margin:4px 0 0; text-indent:16px;
+    text-shadow:0 0 30px #f59e0b33;
   }
-  .wordmark-en small{display:block; letter-spacing:3px; font-size:11px; color:var(--muted);
-    font-weight:500; margin-top:8px; text-indent:3px;}
-  .eyebrow{color:#f87171; font-weight:700; font-size:12px; letter-spacing:3px;
-    text-transform:uppercase; margin:20px 0 12px; font-family:var(--display)}
-  .pains{max-width:640px; margin:0 auto; text-align:start}
+  .wordmark-en small{display:block; letter-spacing:4px; font-size:12px; color:var(--muted);
+    font-weight:500; margin-top:10px; text-indent:4px;}
+  .eyebrow{color:#f87171; font-weight:700; font-size:12px; letter-spacing:4px;
+    text-transform:uppercase; margin:26px 0 14px; font-family:var(--display);
+    text-shadow:0 0 18px #f8717155}
+  .pains{max-width:660px; margin:0 auto; text-align:start}
   .pain{
-    background:#0d1a30d9; border:1px solid var(--line); border-inline-start:3px solid #f87171;
-    border-radius:12px; padding:12px 16px; margin:10px 0; font-size:15px; color:#fde9c8;
-    animation:fadeup .5s ease both; box-shadow:0 4px 18px #00000055;
+    display:flex; gap:14px; align-items:flex-start;
+    background:linear-gradient(180deg, #0e1c33ee, #0b1628ee);
+    border:1px solid var(--line); border-inline-start:3px solid #f87171;
+    border-radius:14px; padding:15px 18px; margin:12px 0; font-size:15.5px; color:#fde9c8;
+    animation:fadeup .5s ease both; box-shadow:0 6px 24px #00000066;
+    transition:transform .25s ease, box-shadow .25s ease;
   }
-  .pain b{color:#f87171}
+  .pain:hover{transform:translateY(-2px); box-shadow:0 10px 30px #00000077, 0 0 24px #f8717118}
+  .pain svg{flex:0 0 26px; width:26px; height:26px; margin-top:1px}
+  .pain b{color:#fca5a5}
   .pain:nth-child(2){animation-delay:.12s} .pain:nth-child(3){animation-delay:.24s}
-  .answer{margin:22px auto 0; color:var(--amber-soft); font-size:20px; font-weight:700;
-    max-width:640px; font-family:var(--display); line-height:1.45}
-  .local{margin:10px auto 0; color:var(--muted); font-size:13px; max-width:600px; font-style:italic}
-  .how{display:flex; justify-content:center; gap:10px; margin-top:20px; flex-wrap:wrap}
+  .answer{margin:26px auto 0; color:var(--amber-soft); font-size:clamp(20px, 5.4vw, 27px); font-weight:700;
+    max-width:680px; font-family:var(--display); line-height:1.45;
+    text-shadow:0 0 34px #f59e0b2e}
+  .answer .hl{color:var(--amber); position:relative; white-space:nowrap}
+  .local{margin:12px auto 0; color:var(--muted); font-size:13.5px; max-width:620px; font-style:italic}
+  .how{display:flex; justify-content:center; gap:10px; margin-top:24px; flex-wrap:wrap}
   .how span{
-    font-family:var(--display); font-size:13px; font-weight:600; padding:8px 16px;
+    font-family:var(--display); font-size:13px; font-weight:600; padding:9px 18px;
     border-radius:999px; border:1px solid #f59e0b55; color:var(--amber-soft);
-    background:#f59e0b12;
+    background:linear-gradient(180deg, #f59e0b1c, #f59e0b08);
+    box-shadow:inset 0 1px 0 #fbbf2422;
   }
+  /* marquee strip */
+  .marquee{overflow:hidden; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    background:#060d1acc; padding:13px 0; position:relative; z-index:2}
+  .marquee-track{display:flex; gap:44px; width:max-content; animation:marq 26s linear infinite;
+    font-family:var(--display); font-size:12.5px; letter-spacing:3px; color:var(--faint);
+    text-transform:uppercase; white-space:nowrap}
+  .marquee-track b{color:var(--roof)}
+  .marquee-track i{color:var(--amber); font-style:normal}
+  @keyframes marq{ to{ transform:translateX(-50%); } }
   /* live demo loop in hero */
   .eye-demo{
     max-width:640px; margin:26px auto 0; text-align:start;
@@ -177,10 +217,17 @@
   }
   .card{
     background:linear-gradient(180deg, var(--card2), var(--card));
-    border:1px solid var(--line); border-radius:18px; padding:24px; margin-bottom:20px;
-    box-shadow:0 10px 34px #00000066;
+    border:1px solid var(--line); border-radius:20px; padding:26px; margin-bottom:22px;
+    box-shadow:0 12px 40px #00000066; position:relative; overflow:hidden;
   }
-  .card h3{margin-top:0; font-family:var(--display); font-size:19px; color:var(--ink)}
+  .card::before{
+    content:""; position:absolute; top:0; left:8%; right:8%; height:1px;
+    background:linear-gradient(90deg, transparent, #fbbf2466, transparent);
+  }
+  .card h3{margin-top:0; font-family:var(--display); font-size:20px; color:var(--ink);
+    letter-spacing:.3px}
+  .card h3 .secno{color:var(--amber); font-size:13px; letter-spacing:3px; display:block;
+    margin-bottom:8px; font-weight:600}
   @supports (animation-timeline: view()){
     .card{animation:reveal .6s ease both; animation-timeline:view(); animation-range:entry 0% entry 22%}
     @keyframes reveal{ from{opacity:0; transform:translateY(26px)} to{opacity:1; transform:none} }
@@ -194,13 +241,21 @@
   input[type=text]::placeholder{color:var(--faint)}
   input[type=range]{width:100%; accent-color:var(--amber); height:36px}
   button.go{
-    margin-top:14px; width:100%; padding:15px; font-size:18px; font-weight:700;
-    font-family:var(--display); letter-spacing:.5px;
-    background:linear-gradient(135deg, var(--amber), var(--amber-deep)); color:#231303;
-    border:none; border-radius:12px; cursor:pointer;
-    box-shadow:0 6px 22px #f59e0b44; transition:transform .15s ease, box-shadow .15s ease;
+    margin-top:14px; width:100%; padding:16px; font-size:18px; font-weight:700;
+    font-family:var(--display); letter-spacing:.5px; line-height:1.25; overflow:hidden;
+    background:linear-gradient(135deg, var(--amber-soft) 0%, var(--amber) 45%, var(--amber-deep) 100%);
+    color:#231303;
+    border:none; border-radius:14px; cursor:pointer; position:relative;
+    box-shadow:0 8px 28px #f59e0b44, inset 0 1px 0 #ffffff88;
+    transition:transform .15s ease, box-shadow .15s ease;
   }
-  button.go:hover{transform:translateY(-1px); box-shadow:0 10px 28px #f59e0b55}
+  button.go::after{
+    content:""; position:absolute; top:0; bottom:0; width:70px; left:-90px;
+    background:linear-gradient(90deg, transparent, #ffffffaa, transparent);
+    transform:skewX(-18deg); animation:btnshine 3.8s ease-in-out infinite;
+  }
+  @keyframes btnshine{ 0%,55%{left:-90px} 90%,100%{left:115%} }
+  button.go:hover{transform:translateY(-2px); box-shadow:0 12px 34px #f59e0b66, inset 0 1px 0 #ffffff88}
   button.go:active{transform:translateY(1px)}
   button.go:disabled{opacity:.55; cursor:wait; transform:none}
   .spinner{display:inline-block; width:18px; height:18px; border:3px solid #23130344;
@@ -289,14 +344,14 @@
   <div class="lang">
     <button id="langEn" onclick="applyLang('en')">EN</button><button id="langUr" onclick="applyLang('ur')">اردو</button>
   </div>
-  <div class="eye" aria-hidden="true"></div>
+  <div class="eye" aria-hidden="true"><span class="orbit"><i></i></span></div>
   <h1 class="wordmark">چھت</h1>
   <div class="wordmark-en">CHHAT<small>{{ s.title }}</small></div>
   <div class="eyebrow" data-i18n="eyebrow">{{ s.eyebrow }}</div>
   <div class="pains">
-    <div class="pain">⚡ <span data-i18n="pain1">{{ s.pain1 }}</span></div>
-    <div class="pain">💸 <span data-i18n="pain2">{{ s.pain2 }}</span></div>
-    <div class="pain">📉 <span data-i18n="pain3">{{ s.pain3 }}</span></div>
+    <div class="pain"><svg viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span data-i18n="pain1">{{ s.pain1 }}</span></div>
+    <div class="pain"><svg viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span data-i18n="pain2">{{ s.pain2 }}</span></div>
+    <div class="pain"><svg viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg><span data-i18n="pain3">{{ s.pain3 }}</span></div>
   </div>
   <p class="answer" data-i18n="hero_answer">{{ s.hero_answer }}</p>
   <p class="local" data-i18n="local_global">{{ s.local_global }}</p>
@@ -318,6 +373,12 @@
     <div class="dquote"><span>9.9 kW · 18 {{ s.panels_word }}</span><b>Rs 1,424,500</b></div>
   </div>
 </header>
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span><b>◉</b> live address parsing</span><span><i>✦</i> roof ai</span><span><b>◉</b> satellite eye</span><span><i>✦</i> instant pkr quotes</span><span><b>◉</b> chhat score</span><span><i>✦</i> اردو + english</span>
+    <span><b>◉</b> live address parsing</span><span><i>✦</i> roof ai</span><span><b>◉</b> satellite eye</span><span><i>✦</i> instant pkr quotes</span><span><b>◉</b> chhat score</span><span><i>✦</i> اردو + english</span>
+  </div>
+</div>
 <main>
   <div class="steps-bar">
     <span class="step-pill on" id="pill1">1 · <span data-i18n="step1">{{ s.step1 }}</span></span>
@@ -393,7 +454,7 @@
   </div>
 
   <div class="card" id="aiCard">
-    <h3 data-i18n="our_ai_title">{{ s.our_ai_title }}</h3>
+    <h3><span class="secno">01 / evidence</span><span data-i18n="our_ai_title">{{ s.our_ai_title }}</span></h3>
     <ul class="ai-list">
       <li data-i18n="ai_p1">{{ s.ai_p1 }}</li>
       <li data-i18n="ai_p2">{{ s.ai_p2 }}</li>
@@ -403,7 +464,7 @@
   </div>
 
   <div class="card" id="ventureCard">
-    <h3 data-i18n="venture_title">{{ s.venture_title }}</h3>
+    <h3><span class="secno">02 / the business</span><span data-i18n="venture_title">{{ s.venture_title }}</span></h3>
     <ul class="ai-list">
       <li data-i18n="venture_bm">{{ s.venture_bm }}</li>
       <li data-i18n="venture_val">{{ s.venture_val }}</li>
@@ -579,6 +640,25 @@ function renderQuote(q, panels){
     ['Rs ' + Math.round(q.lifetime_savings_25y_pkr).toLocaleString(), UI.savings_25y + ' ' + UI.est_tag],
     [lastReport.score.breakdown.usable_area + ' / ' + lastReport.score.breakdown.shade + ' / ' + lastReport.score.breakdown.payback, UI.area_shade_payback],
   ].map(([b,s], i) => `<div class="kpi" style="animation-delay:${i*80}ms"><b>${b}</b><span>${s}</span></div>`).join('');
+  document.querySelectorAll('#kpis .kpi b, #quote .kpi b').forEach(countUp);
+}
+/* animated number count-up for KPI values */
+function countUp(el){
+  const txt = el.textContent;
+  const m = txt.match(/([\d,]+\.?\d*)/);
+  if(!m) return;
+  const target = parseFloat(m[1].replace(/,/g,''));
+  if(isNaN(target)) return;
+  const dec = ((m[1].split('.')[1])||'').length;
+  const prefix = txt.slice(0, m.index);
+  const suffix = txt.slice(m.index + m[0].length);
+  const t0 = performance.now(), dur = 750;
+  (function tick(t){
+    const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+    const v = target * e;
+    el.textContent = prefix + (dec ? v.toFixed(dec) : Math.round(v).toLocaleString('en-US')) + suffix;
+    if(p < 1) requestAnimationFrame(tick);
+  })(t0);
 }
 function renderReport(d, keepStep){
   lastReport = d;
