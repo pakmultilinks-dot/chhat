@@ -74,17 +74,17 @@ def main():
             polys.append(pts)
     print(f"buildings: {len(polys)}")
 
-    # 2. tile range + mosaic
-    x0, y1 = latlon_to_tile(north, west, Z)
-    x1, y0 = latlon_to_tile(south, east, Z)
-    nx, ny = x1 - x0 + 1, y1 - y0 + 1
-    print(f"tiles x[{x0},{x1}] y[{y0},{y1}] -> {nx}x{ny} = {nx*ny}")
+    # 2. tile range + mosaic (note: y grows southward, so ymin is the north edge)
+    x0, ymin = latlon_to_tile(north, west, Z)
+    x1, ymax = latlon_to_tile(south, east, Z)
+    nx, ny = x1 - x0 + 1, ymax - ymin + 1
+    print(f"tiles x[{x0},{x1}] y[{ymin},{ymax}] -> {nx}x{ny} = {nx*ny}")
     H, W = ny * 256, nx * 256
     mosaic = np.zeros((H, W, 3), np.uint8)
     ok = 0
     for iy in range(ny):
         for ix in range(nx):
-            url = TILE_URL.format(z=Z, y=y0 + iy, x=x0 + ix)
+            url = TILE_URL.format(z=Z, y=ymin + iy, x=x0 + ix)
             try:
                 rr = requests.get(url, headers=UA, timeout=30)
                 if rr.status_code == 200 and len(rr.content) > 4000:
@@ -98,8 +98,8 @@ def main():
     print(f"tiles ok: {ok}/{nx*ny}")
 
     # mosaic geo-reference: top-left corner lat/lon
-    tlat_north, tlon_west = tile_to_latlon(x0, y0, Z)          # NW corner of first tile
-    tlat_south, tlon_east = tile_to_latlon(x1 + 1, y1 + 1, Z)  # SE corner of last tile
+    tlat_north, tlon_west = tile_to_latlon(x0, ymin, Z)          # NW corner of first tile
+    tlat_south, tlon_east = tile_to_latlon(x1 + 1, ymax + 1, Z)  # SE corner of last tile
 
     def project(lat, lon):
         px = (lon - tlon_west) / (tlon_east - tlon_west) * W
