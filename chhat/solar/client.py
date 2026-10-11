@@ -19,10 +19,13 @@ import math
 import os
 import random
 
+import cv2
+import numpy as np
 import requests
 
 BUILDING_INSIGHTS_URL = "https://solar.googleapis.com/v1/buildingInsights:findClosest"
 DATA_LAYERS_URL = "https://solar.googleapis.com/v1/dataLayers:get"
+ESRI_TILE_URL = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
 
 
 class SolarError(Exception):
@@ -117,3 +120,59 @@ def roof_imagery_url(lat: float, lng: float, api_key: str | None = None,
                      timeout=30)
     r.raise_for_status()
     return r.json().get("imageryRenderedUrl")
+
+
+# ---------------------------------------------------------------------------
+# Open-imagery tap (no key needed): Esri World Imagery.
+#
+# This is what our OWN rooftop segmentation model reads in the demo.
+# Google dataLayers is a swappable alternative when a key exists; the brain
+# is always our trained model, never the imagery vendor.
+# ---------------------------------------------------------------------------
+_ESRI_UA = {"User-Agent": "chhat-roof-imagery (research project)"}
+_imagery_cache: dict = {}
+
+
+def _tile_float(lat: float, lon: float, z: int):
+    n = 2 ** z
+    x = (lon + 180.0) / 360.0 * n
+    lr = math.radians(lat)
+    y = (1.0 - math.asinh(math.tan(lr)) / math.pi) / 2.0 * n
+    return x, y
+
+
+def roof_imagery(lat: float, lng: float, z: int = 19, size: int = 512):
+    """Fetch real Esri World Imagery centered on (lat, lng).
+
+    Returns (bgr_image, source_label). z19 ~ 0.3 m/px, so a 512px crop
+    covers ~150 m — enough to see the pinned rooftop and its neighbours.
+    Results are cached per rounded coordinate in-process.
+    """
+    import numpy as np  # local: this module is import-light otherwise
+
+    key = (round(lat, 5), round(lng, 5), z, size)
+    if key in _imagery_cache:
+        return _imagery_cache[key]
+
+    fx, fy = _tile_float(lat, lng, z)
+    x0, y0 = int(fx) - 1, int(fy) - 1
+    canvas = np.zeros((1024, 1024, 3), np.uint8)
+    for iy in range(4):
+        for ix in range(4):
+            url = ESRI_TILE_URL.format(z=z, y=y0 + iy, x=x0 + ix)
+            try:
+                rr = requests.get(url, headers=_ESRI_UA, timeout=20)
+                if rr.status_code == 200 and len(rr.content) > 4000:
+                    img = cv2.imdecode(np.frombuffer(rr.content, np.uint8),
+                                       cv2.IMREAD_COLOR)
+                    if img is not None and img.shape[:2] == (256, 256):
+                        canvas[iy*256:(iy+1)*256, ix*256:(ix+1)*256] = img
+            except Exception:
+                pass
+    cx = int((fx - x0) * 256)
+    cy = int((fy - y0) * 256)
+    half = size // 2
+    crop = canvas[cy-half:cy+half, cx-half:cx+half].copy()
+    label = "Esri World Imagery (open data), z19 — read by OUR trained rooftop model"
+    _imagery_cache[key] = (crop, label)
+    return crop, label

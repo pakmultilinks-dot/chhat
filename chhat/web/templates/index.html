@@ -82,6 +82,7 @@
     <span class="step-pill on" id="pill1">1 · {{ s.step1 }}</span>
     <span class="step-pill" id="pill2">2 · {{ s.step2 }}</span>
     <span class="step-pill" id="pill3">3 · {{ s.step3 }}</span>
+    <span class="step-pill" id="pill4">4 · {{ s.step4 }}</span>
   </div>
 
   <div class="card step on" id="step1">
@@ -109,6 +110,29 @@
     <h3 style="margin-top:22px">{{ s.quote_title }}</h3>
     <div class="kpis" id="quote"></div>
     <p style="font-size:12px;color:#78716c" id="fineprint"></p>
+    <button class="go" id="seeAi">{{ s.see_ai }}</button>
+    <div id="err3" class="err"></div>
+  </div>
+
+  <div class="card step" id="step4">
+    <div id="demoBadge4" class="demo" style="display:none">{{ s.demo_badge }}</div>
+    <h3 style="text-align:center">{{ s.roofai_title }}</h3>
+    <p class="hint" style="text-align:center">{{ s.roofai_hint }}</p>
+    <div id="aiBadge" style="text-align:center;margin:10px 0"></div>
+    <img id="satimg" style="width:100%;border-radius:10px;display:none" alt="satellite imagery">
+    <label style="display:block;margin:10px 0;font-size:14px">
+      <input type="checkbox" id="ovToggle" checked> {{ s.overlay_label }}
+    </label>
+    <div style="margin:10px 0">
+      <div style="font-size:13px;color:#57534e">{{ s.conf_label }}: <b id="confVal">–</b></div>
+      <div style="background:#e7e5e4;border-radius:6px;height:10px;margin-top:4px">
+        <div id="confBar" style="height:10px;border-radius:6px;width:0%;background:#f59e0b"></div>
+      </div>
+    </div>
+    <p class="hint" id="aiSource" style="font-size:12px"></p>
+    <p class="err" id="unsureNote" style="display:none">{{ s.unsure_note }}</p>
+    <button class="go" id="backReport" style="background:#e7e5e4;color:#1c1917">{{ s.back_report }}</button>
+    <div id="err4" class="err"></div>
   </div>
 </main>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -195,9 +219,9 @@ $('confirm').onclick = async () => {
       e.style.animationDelay = (i * 45) + 'ms';
     });
     $('quote').innerHTML = [
-      ['Rs ' + Math.round(d.quote.equipment_cost_pkr).toLocaleString(), UI.system_cost],
-      ['Rs ' + Math.round(d.quote.annual_savings_pkr).toLocaleString(), UI.saved_year],
-      ['Rs ' + Math.round(d.quote.lifetime_savings_25y_pkr).toLocaleString(), UI.savings_25y],
+      ['Rs ' + Math.round(d.quote.equipment_cost_pkr).toLocaleString(), UI.system_cost + ' ' + UI.est_tag],
+      ['Rs ' + Math.round(d.quote.annual_savings_pkr).toLocaleString(), UI.saved_year + ' ' + UI.est_tag],
+      ['Rs ' + Math.round(d.quote.lifetime_savings_25y_pkr).toLocaleString(), UI.savings_25y + ' ' + UI.est_tag],
       [d.score.breakdown.usable_area + ' / ' + d.score.breakdown.shade + ' / ' + d.score.breakdown.payback, UI.area_shade_payback],
     ].map(([b,s], i) => `<div class="kpi" style="animation-delay:${i*80}ms"><b>${b}</b><span>${s}</span></div>`).join('');
     $('fineprint').textContent =
@@ -207,6 +231,47 @@ $('confirm').onclick = async () => {
   } catch(e){ $('err2').textContent = e.message; }
   busy($('confirm'), false, UI.confirm);
 };
+
+let aiData = null;
+$('seeAi').onclick = async () => {
+  $('err3').textContent = '';
+  busy($('seeAi'), true);
+  try {
+    const r = await fetch('/api/roofseg', {method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({lat, lng})});
+    const d = await r.json();
+    if(d.error) throw new Error(d.error);
+    aiData = d;
+    $('demoBadge4').style.display = 'block';
+    const img = $('satimg');
+    img.src = d.imagery; img.style.display = 'block';
+    $('ovToggle').checked = !!d.overlay;
+    const conf = Math.round(d.confidence * 100);
+    $('confVal').textContent = conf + '%';
+    const bar = $('confBar');
+    bar.style.width = conf + '%';
+    bar.style.background = d.status === 'OK' ? '#16a34a' : '#dc2626';
+    const badge = $('aiBadge');
+    if(d.status === 'OK'){
+      badge.innerHTML = '<span class="step-pill on">' + UI.ok_badge + '</span>';
+      $('unsureNote').style.display = 'none';
+    } else {
+      badge.innerHTML = '<span class="step-pill" style="background:#dc2626;color:#fff">' + UI.unsure_badge + '</span>';
+      $('unsureNote').style.display = 'block';
+    }
+    $('aiSource').textContent = d.source;
+    show('step4', 'pill4');
+  } catch(e){ $('err3').textContent = e.message; }
+  busy($('seeAi'), false, UI.see_ai);
+};
+
+$('ovToggle').onchange = () => {
+  if(!aiData) return;
+  $('satimg').src = ($('ovToggle').checked && aiData.overlay) ? aiData.overlay : aiData.imagery;
+};
+
+$('backReport').onclick = () => show('step3', 'pill3');
 </script>
 </body>
 </html>
