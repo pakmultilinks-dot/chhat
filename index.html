@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Chhat - Rooftop Solar AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0/dist/ort.min.js"></script>
+<style>
+:root { --navy:#0a1628; --navy2:#0f1f3a; --amber:#fbbf24; --emerald:#10b981; --ink:#e8eef7; --mut:#93a4bd; }
+* { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { margin:0; background:var(--navy); color:var(--ink); font-family:Inter,system-ui,sans-serif; }
+.hero { position:relative; padding:28px 18px 22px; overflow:hidden;
+  background:linear-gradient(180deg, rgba(10,22,40,.55), rgba(10,22,40,.92)),
+  url('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/16/40148/45090') center/cover; }
+.hero h1 { font-family:Unbounded,sans-serif; font-weight:900; font-size:34px; margin:0; letter-spacing:1px; }
+.hero h1 .ch { color:var(--amber); }
+.hero p { color:#cdd8ea; font-size:14px; margin:8px 0 0; max-width:520px; line-height:1.5; }
+.badge { display:inline-block; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--amber);
+  border:1px solid rgba(251,191,36,.4); padding:5px 10px; border-radius:999px; margin-bottom:10px; }
+.wrap { max-width:640px; margin:0 auto; padding:0 16px 60px; }
+.card { background:var(--navy2); border:1px solid rgba(255,255,255,.07); border-radius:16px; padding:16px; margin-top:14px; }
+.card h3 { font-family:Unbounded,sans-serif; font-size:13px; letter-spacing:1px; margin:0 0 10px; color:var(--amber); }
+.addrRow { display:flex; gap:8px; margin-top:-28px; position:relative; z-index:2; }
+#addr { flex:1; background:#0a1730; border:1px solid rgba(251,191,36,.35); color:var(--ink);
+  border-radius:12px; padding:14px; font-size:15px; outline:none; }
+#addr:focus { border-color:var(--amber); }
+#analyzeBtn { background:var(--amber); color:#1a1206; border:0; border-radius:12px; padding:0 20px;
+  font-weight:800; font-size:15px; cursor:pointer; font-family:Unbounded,sans-serif; }
+#analyzeBtn:active { transform:scale(.97); }
+#parseHint { font-size:12px; color:var(--mut); margin-top:8px; }
+.frow { display:flex; justify-content:space-between; padding:7px 2px; border-bottom:1px dashed rgba(255,255,255,.08); font-size:14px; }
+.fk { color:var(--mut); } .fv { font-weight:600; text-align:right; }
+#satCanvas { width:100%; border-radius:12px; display:block; background:#06101f; }
+#maskToggle { display:none; margin-top:10px; background:transparent; color:var(--emerald);
+  border:1px solid var(--emerald); border-radius:999px; padding:8px 16px; font-weight:700; cursor:pointer; }
+#roofMsg { display:none; margin-top:10px; font-size:13px; line-height:1.55; color:#fca5a5;
+  background:rgba(239,68,68,.08); border:1px solid rgba(239,68,68,.3); padding:10px 12px; border-radius:10px; }
+.qgrid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:6px; }
+.qbox { background:#0a1730; border-radius:12px; padding:12px; }
+.qbox .l { font-size:11px; color:var(--mut); letter-spacing:.5px; }
+.qbox .v { font-size:19px; font-weight:800; margin-top:4px; }
+.qbox .v.amber { color:var(--amber); } .qbox .v.green { color:var(--emerald); }
+.scoreRow { display:flex; align-items:center; gap:14px; margin-bottom:6px; }
+#scoreRing { width:74px; height:74px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-family:Unbounded,sans-serif; font-weight:900; font-size:22px; flex:none; }
+input[type=range] { width:100%; accent-color:var(--amber); margin-top:8px; }
+#status { display:none; align-items:center; gap:10px; margin-top:14px; background:#0a1730;
+  border:1px solid rgba(251,191,36,.25); padding:12px 14px; border-radius:12px; font-size:14px; }
+#spinner { width:18px; height:18px; border-radius:50%; border:3px solid rgba(251,191,36,.25);
+  border-top-color:var(--amber); animation:spin 0.8s linear infinite; flex:none; }
+@keyframes spin { to { transform:rotate(360deg); } }
+#toast { position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(20px); background:#f59e0b;
+  color:#1a1206; font-weight:700; font-size:14px; padding:12px 18px; border-radius:12px; opacity:0;
+  transition:all .25s; pointer-events:none; max-width:90vw; text-align:center; z-index:50; }
+#toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+.foot { text-align:center; color:var(--mut); font-size:11px; margin-top:26px; line-height:1.7; }
+.urdu { font-family:"Noto Nastaliq Urdu",serif; }
+.langRow { display:flex; justify-content:flex-end; margin-top:10px; }
+#langBtn { background:transparent; color:var(--ink); border:1px solid rgba(255,255,255,.2);
+  border-radius:999px; padding:7px 14px; font-size:13px; cursor:pointer; }
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="wrap" style="padding-bottom:0">
+    <span class="badge">PAKISTAN'S ROOFTOP SOLAR AI</span>
+    <h1><span class="ch">CHHAT</span></h1>
+    <p id="heroSub">Type any house address. Our AI reads it, finds the roof on satellite, and prices your solar system in seconds.</p>
+    <div class="langRow"><button id="langBtn">اردو</button></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="addrRow">
+    <input id="addr" placeholder="House 123, Street 4, Block C, Nishat Colony, Lahore" autocomplete="off">
+    <button id="analyzeBtn">Analyze</button>
+  </div>
+  <div id="parseHint">Loading AI models...</div>
+  <div id="status"><div id="spinner"></div><span id="statusText"></span></div>
+
+  <div class="card" id="parsedCard" style="display:none">
+    <h3>AI ADDRESS PARSE</h3>
+    <div id="parsedFields"></div>
+  </div>
+
+  <div class="card" id="mapCard" style="display:none">
+    <h3>SATELLITE + AI ROOF MASK</h3>
+    <canvas id="satCanvas"></canvas>
+    <button id="maskToggle" data-on="1">Hide AI mask</button>
+    <div id="roofMsg"></div>
+  </div>
+
+  <div class="card" id="quoteCard" style="display:none">
+    <h3>YOUR SOLAR QUOTE</h3>
+    <div class="scoreRow">
+      <div id="scoreRing">--</div>
+      <div style="font-size:13px;color:var(--mut);line-height:1.6">Chhat Score: rooftop solar viability, 0-100, from your roof's real shape and size.</div>
+    </div>
+    <div class="qgrid">
+      <div class="qbox"><div class="l">Panels</div><div class="v" id="qPanels">--</div></div>
+      <div class="qbox"><div class="l">System</div><div class="v" id="qKw">--</div></div>
+      <div class="qbox"><div class="l">Cost</div><div class="v amber" id="qCost">--</div></div>
+      <div class="qbox"><div class="l">Saves / year</div><div class="v green" id="qSave">--</div></div>
+      <div class="qbox"><div class="l">Payback</div><div class="v" id="qPayback">--</div></div>
+      <div class="qbox"><div class="l">Usable roof</div><div class="v" id="qArea">--</div></div>
+    </div>
+    <div style="margin-top:12px;font-size:13px;color:var(--mut)">AI confidence: <b id="qConf" style="color:var(--emerald)">--</b></div>
+    <div style="margin-top:10px">
+      <label style="font-size:13px">Panels: <b id="panelCountLbl">--</b></label>
+      <input type="range" id="panelSlider" min="2" max="18" value="10">
+    </div>
+  </div>
+
+  <div class="foot">
+    Chhat runs its own trained AI: BiLSTM address parser + rooftop segmentation.<br>
+    Imagery: Esri World Imagery. Prices: Oct 2026 Lahore market rates.<br>
+    <span class="urdu">چھت ۔ آپ کی چھت، آپ کی بجلی</span>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script src="./parser.js"></script>
+<script src="./app.js"></script>
+<script>
+let UR = false;
+const T = {
+  en: { sub: "Type any house address. Our AI reads it, finds the roof on satellite, and prices your solar system in seconds.", btn: "Analyze", ph: "House 123, Street 4, Block C, Nishat Colony, Lahore" },
+  ur: { sub: "کوئی بھی گھر کا پتہ لکھیں۔ ہماری AI اسے پڑھے گی، سیٹلائٹ پر چھت تلاش کرے گی، اور سیکنڈوں میں سولر کی قیمت بتائے گی۔", btn: "تجزیہ کریں", ph: "مکان 123، گلی 4، بلاک C، نشاط کالونی، لاہور" }
+};
+document.getElementById("langBtn").onclick = () => {
+  UR = !UR;
+  const t = UR ? T.ur : T.en;
+  document.getElementById("heroSub").textContent = t.sub;
+  document.getElementById("heroSub").classList.toggle("urdu", UR);
+  document.getElementById("analyzeBtn").textContent = t.btn;
+  document.getElementById("addr").placeholder = t.ph;
+  document.getElementById("langBtn").textContent = UR ? "English" : "اردو";
+  document.documentElement.dir = UR ? "rtl" : "ltr";
+};
+</script>
+</body>
+</html>
