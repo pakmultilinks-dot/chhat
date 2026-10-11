@@ -67,6 +67,8 @@ def main():
     ap.add_argument("--batch", type=int, default=8)
     ap.add_argument("--lr", type=float, default=1e-3)
     ap.add_argument("--patience", type=int, default=6)
+    ap.add_argument("--resume", type=str, default=None,
+                    help="path to checkpoint .pt to resume from (keeps its val_iou as best)")
     args = ap.parse_args()
 
     torch.manual_seed(7)
@@ -90,6 +92,13 @@ def main():
     bce = nn.BCEWithLogitsLoss()
 
     best_iou, bad, t0 = 0.0, 0, time.time()
+    start_ep = 0
+    if args.resume:
+        ckpt = torch.load(args.resume, map_location="cpu")
+        sd = ckpt["state_dict"] if isinstance(ckpt, dict) and "state_dict" in ckpt else ckpt
+        model.load_state_dict(sd)
+        best_iou = float(ckpt.get("val_iou", 0.0)) if isinstance(ckpt, dict) else 0.0
+        print(f"resumed from {args.resume}, best val IoU {best_iou:.4f}", flush=True)
     for ep in range(args.epochs):
         model.train()
         tot = 0.0
