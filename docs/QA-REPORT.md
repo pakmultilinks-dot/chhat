@@ -100,3 +100,44 @@ All numbers below are measured, not claimed. Demo-mode figures are labeled.
 - Exact house needs the user's map pin; text address alone is not enough.
 - Demo-mode figures are estimates until GOOGLE_SOLAR_API_KEY exists.
 - No deployment performed (user order).
+
+---
+
+## Winners-polish + interactivity wave (2026-10-11)
+
+### 1. Unit tests: 15/15 green (unchanged, re-run on final state)
+
+### 2. Multi-address landmark test (7 Lahore areas)
+- Packages Mall (DHA), Emporium Mall (Johar Town), Model Town Park,
+  Fortress Square (Cantt), Badshahi Mosque (Old City),
+  Liberty Market (Gulberg), Shalimar Gardens — all geocoded via
+  Nominatim, Esri z19 chips, `predict_best` run.
+- Result: model handles small residential roofs partially (E378 street:
+  discrete patches, "near but not accurate"); FAILS on malls, monuments,
+  parking lots, roads, lawns (paints non-roof flat surfaces).
+  Model Town Park honestly returned UNSURE.
+- Full comparison: docs/multitest-report.md + images in docs/multitest/.
+- Product implication: demo ONLY on residential addresses.
+
+### 3. Interactivity — all controls verified
+- Live parsing as-you-type (debounced /api/parse, chips render while
+  typing) — endpoint verified; JS syntax checked with node.
+- Instant EN/UR switch (no reload): both string tables embedded,
+  data-i18n swap, dir flips, dynamic report re-renders — / and /?lang=ur
+  return 200 with correct strings.
+- Panel slider + live re-quote: /api/requote verified
+  (10 panels -> 5.5 kW / Rs 802,500 / 2.6 yrs;
+   6 panels -> 3.3 kW / Rs 491,500 / 2.7 yrs; bad input -> 400).
+  SVG re-draws first N panels; quote KPIs update without reload.
+- Pin drag (pre-existing) + mask overlay toggle (pre-existing) still work.
+
+### 4. Winners-polish applied
+- Landing leads with Pakistan's energy pain (load-shedding, Rs 47.69/unit,
+  net-billing Rs 8-11 export — all grounded in chhat/quote/prices.yaml),
+  then Chhat as the 60-second answer.
+- "Our AI" section in-app: honest numbers (parser F1, both IoUs,
+  confidence gate, published limits) — thesis-defense material.
+- "Venture" section: free quotes -> paid installer leads, validation plan.
+- "Built for Pakistani addresses and rooftops first — generalizing to
+  dense cities anywhere" (organizers' local-needs-global-relevance line).
+- Golden offline fallback kept and re-verified (200 on /golden-demos.json).
