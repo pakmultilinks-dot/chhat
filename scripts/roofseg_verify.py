@@ -7,6 +7,9 @@ what the model actually does, including UNSURE cases.
 """
 import glob
 import os
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 import cv2
 import numpy as np
